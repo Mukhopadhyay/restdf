@@ -1,0 +1,19 @@
+# Ide generated folders
+.idea/*
+.vscode/*
+
+# Compiled codes
+__pycache__/
+
+# Jupyter notebook stuff
+*.ipynb
+ipynb_checkpoints/
+.ipynb_checkpoints/
+.ipynb_checkpoints/*
+
+# Log files
+*.out
+*.Log
+
+# Venv
+venv
