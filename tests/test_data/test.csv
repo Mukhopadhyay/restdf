@@ -1,0 +1,31 @@
+PassengerId,Pclass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked
+1218,2,"Becker, Miss. Ruth Elizabeth",female,12.0,2,1,230136,39.0,F4,S
+1128,1,"Warren, Mr. Frank Manley",male,64.0,1,0,110813,75.25,D37,C
+1237,3,"Abelseth, Miss. Karen Marie",female,16.0,0,0,348125,7.65,,S
+1109,1,"Wick, Mr. George Dennick",male,57.0,1,1,36928,164.8667,,S
+915,1,"Williams, Mr. Richard Norris II",male,21.0,0,1,PC 17597,61.3792,,C
+1032,3,"Goodwin, Miss. Jessie Allis",female,10.0,5,2,CA 2144,46.9,,S
+1193,2,"Malachard, Mr. Noel",male,,0,0,237735,15.0458,D,C
+1006,1,"Straus, Mrs. Isidor (Rosalie Ida Blun)",female,63.0,1,0,PC 17483,221.7792,C55 C57,S
+1263,1,"Wilson, Miss. Helen Alice",female,31.0,0,0,16966,134.5,E39 E41,C
+1095,2,"Quick, Miss. Winifred Vera",female,8.0,1,1,26360,26.0,,S
+1203,3,"Vartanian, Mr. David",male,22.0,0,0,2658,7.225,,C
+1132,1,"Lindstrom, Mrs. Carl Johan (Sigrid Posse)",female,55.0,0,0,112377,27.7208,,C
+1089,3,"Nilsson, Miss. Berta Olivia",female,18.0,0,0,347066,7.775,,S
+1249,3,"Lockyer, Mr. Edward",male,,0,0,1222,7.8792,,S
+1206,1,"White, Mrs. John Stuart (Ella Holmes)",female,55.0,0,0,PC 17760,135.6333,C32,C
+1046,3,"Asplund, Master. Filip Oscar",male,13.0,4,2,347077,31.3875,,S
+1036,1,"Lindeberg-Lind, Mr. Erik Gustaf (Mr Edward Lingrey"")""",male,42.0,0,0,17475,26.55,,S
+1055,3,"Pearce, Mr. Ernest",male,,0,0,343271,7.0,,S
+975,3,"Demetri, Mr. Marinko",male,,0,0,349238,7.8958,,S
+1228,2,"de Brito, Mr. Jose Joaquim",male,32.0,0,0,244360,13.0,,S
+1135,3,"Hyman, Mr. Abraham",male,,0,0,3470,7.8875,,S
+1251,3,"Lindell, Mrs. Edvard Bengtsson (Elin Gerda Persson)",female,30.0,1,0,349910,15.55,,S
+1043,3,"Matinoff, Mr. Nicola",male,,0,0,349255,7.8958,,C
+966,1,"Geiger, Miss. Amalie",female,35.0,0,0,113503,211.5,C130,C
+1287,1,"Smith, Mrs. Lucien Philip (Mary Eloise Hughes)",female,18.0,1,0,13695,60.0,C31,S
+958,3,"Burns, Miss. Mary Delia",female,18.0,0,0,330963,7.8792,,Q
+1057,3,"Kink-Heilmann, Mrs. Anton (Luise Heilmann)",female,26.0,1,1,315153,22.025,,S
+1231,3,"Betros, Master. Seman",male,,0,0,2622,7.2292,,C
+982,3,"Dyker, Mrs. Adolf Fredrik (Anna Elisabeth Judith Andersson)",female,22.0,1,0,347072,13.9,,S
+1049,3,"Lundin, Miss. Olga Elida",female,23.0,0,0,347469,7.8542,,S
