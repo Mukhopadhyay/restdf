@@ -62,3 +62,18 @@ class UnknownFileTypeError(Error):
         
     def __repr__(self) -> str:
         return f'[{self.__class__.__name__}] {self.message}\nExtension: {self.extension}'
+
+
+class InvalidRequestBodyError(Error):
+    """
+    Exception raised when passed request body has invalid values in them.
+
+    Attributes:
+
+    """
+    def __init__(self, message: str) -> None:
+        super().__init__(f'[{self.__class__.__name__}] {message}\n')
+        self.message = message
+
+    def __repr__(self) -> str:
+        return f'[{self.__class__.__name__}] {self.message}\n'
