@@ -17,3 +17,7 @@ ipynb_checkpoints/
 
 # Venv
 venv
+
+# Test
+.pytest_cache
+*/.pytest_cache

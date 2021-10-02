@@ -18,7 +18,11 @@ from restdf.routes import flask_routes
 
 routes = [
     '/',
-    '/stats'
+    '/stats',
+    '/columns',
+    '/describe',
+    '/info',
+    '/value_counts/<column>'
 ]
 
 def get_routes_from_blueprint(blueprint: Blueprint):
