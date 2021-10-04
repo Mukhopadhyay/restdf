@@ -5,41 +5,11 @@ try:
 except ModuleNotFoundError:
     import tests.context
 
-# Built-in modules
-import os
-
 # Third-party modules
 import pytest
 
 # RestDF modules
 from restdf.utils import io
-from restdf.utils import exceptions
-
-@pytest.fixture
-def extension_paths():
-    return [
-        ('~/Downloads/data.zip', 'zip'),
-        ('~/data.rar', 'rar'),
-        (r'C:\Users\Name\Desktop\something.txt', 'txt'),
-        ('~/Downloads/', ''),
-        ('./../', '')
-    ]
-
-@pytest.fixture
-def df_read_paths():
-    return [
-        ('tests/test_data/test.csv',  1218),
-        ('tests/test_data/test.xlsx', 1149),
-        ('tests/test_data/test.pkl',   936)
-    ]
-
-@pytest.fixture
-def df_read_exceptions():
-    return [
-        ('tests/test_data/test',    exceptions.PathError),
-        ('tests/context.py',        exceptions.UnknownFileTypeError),
-        ('tests/test_data/int.pkl', exceptions.DataFrameError)
-    ]
 
 @pytest.mark.io
 def test_get_extension(extension_paths):
