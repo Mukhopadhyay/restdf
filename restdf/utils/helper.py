@@ -20,6 +20,26 @@ def get_index(filename: str) -> dict:
                 'name': '/stats',
                 'type': ['GET'],
                 'description': ''
+            },
+            {
+                'name': '/columns',
+                'type': ['GET'],
+                'description': ''
+            },
+            {
+                'name': '/describe',
+                'type': ['POST'],
+                'description': ''
+            },
+            {
+                'name': '/info',
+                'type': ['GET'],
+                'description': ''
+            },
+            {
+                'name': '/value_counts/<column>',
+                'type': ['GET'],
+                'description': ''
             }
         ]
     }

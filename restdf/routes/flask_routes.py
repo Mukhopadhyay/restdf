@@ -6,7 +6,7 @@ from datetime import datetime
 import flask
 import pandas as pd
 from flask_cors import cross_origin
-from flask import Blueprint, json, jsonify, request, Response
+from flask import Blueprint, jsonify, request, Response
 
 # RestDF modules
 from ..utils import helper, exceptions
@@ -92,3 +92,4 @@ def get_value_counts(column: str):
         return jsonify({'error': f'Column "{column}" is not present in the dataframe. Please check /columns'})
     else:
         return jsonify({'column': column, 'value_counts': vc})
+
