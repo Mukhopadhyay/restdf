@@ -93,3 +93,9 @@ def get_value_counts(column: str):
     else:
         return jsonify({'column': column, 'value_counts': vc})
 
+@cross_origin
+@flask_blueprint.route('/nulls', methods=['GET'])
+def get_info() -> Response:
+    global _total_requests; _total_requests += 1
+    nulls = pd.isna(dataframe).sum().to_dict()
+    return jsonify(nulls)
