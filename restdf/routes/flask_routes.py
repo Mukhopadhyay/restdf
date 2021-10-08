@@ -95,7 +95,23 @@ def get_value_counts(column: str):
 
 @cross_origin
 @flask_blueprint.route('/nulls', methods=['GET'])
-def get_info() -> Response:
+def get_nulls() -> Response:
     global _total_requests; _total_requests += 1
     nulls = pd.isna(dataframe).sum().to_dict()
     return jsonify(nulls)
+
+@cross_origin
+@flask_blueprint.route('/head', methods=['POST'])
+def get_df_head() -> Response:
+    request_body = request.get_json()
+    request_body = request_body if isinstance(request_body, dict) else {}
+    try:
+        df_head_data = helper.get_dataframe_head(
+            dataframe, n=request_body.get('n', 5)
+        )
+    except Exception as err:
+        return jsonify({'error': str(err)})
+    else:
+        return jsonify(df_head_data)
+
+# Sample endpoint
