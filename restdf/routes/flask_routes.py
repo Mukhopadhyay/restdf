@@ -7,6 +7,7 @@ import flask
 import pandas as pd
 from flask_cors import cross_origin
 from flask import Blueprint, jsonify, request, Response
+from pandas.core.frame import DataFrame
 
 # RestDF modules
 from ..utils import helper, exceptions
@@ -84,8 +85,17 @@ def get_info() -> Response:
     return jsonify({'info': info, 'shape': dataframe.shape})
 
 @cross_origin
+@flask_blueprint.route('/dtypes', methods=['GET'])
+def get_dtypes() -> Response:
+    global _total_requests; _total_requests += 1
+    return jsonify(
+        {k: str(v) for (k,v) in dataframe.dtypes.to_dict().items()}
+    )
+
+@cross_origin
 @flask_blueprint.route('/value_counts/<column>', methods=['GET'])
 def get_value_counts(column: str):
+    global _total_requests; _total_requests += 1
     try:
         vc = helper.get_value_counts(dataframe, column)
     except KeyError:
@@ -103,15 +113,22 @@ def get_nulls() -> Response:
 @cross_origin
 @flask_blueprint.route('/head', methods=['POST'])
 def get_df_head() -> Response:
+    global _total_requests; _total_requests += 1
     request_body = request.get_json()
     request_body = request_body if isinstance(request_body, dict) else {}
-    try:
-        df_head_data = helper.get_dataframe_head(
-            dataframe, n=request_body.get('n', 5)
-        )
-    except Exception as err:
-        return jsonify({'error': str(err)})
-    else:
-        return jsonify(df_head_data)
+    df_head_data = helper.get_dataframe_head(
+        dataframe, n=request_body.get('n', 5)
+    )
+    return jsonify(df_head_data)
 
-# Sample endpoint
+@cross_origin
+@flask_blueprint.route('/sample', methods=['POST'])
+def get_df_sample() -> Response:
+    global _total_requests; _total_requests += 1
+    request_body = request.get_json()
+    request_body = request_body if isinstance(request_body, dict) else {}
+    df_sample_data = helper.get_dataframe_sample(
+        dataframe, request_body
+    )
+    return jsonify(df_sample_data)
+

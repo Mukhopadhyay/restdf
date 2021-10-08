@@ -23,7 +23,11 @@ routes = [
     '/columns',
     '/describe',
     '/info',
-    '/value_counts/<column>'
+    '/dtypes',
+    '/value_counts/<column>',
+    '/nulls',
+    '/head',
+    '/sample'
 ]
 
 def get_routes_from_blueprint(blueprint: Blueprint):
@@ -43,6 +47,7 @@ def test_get_flask_blueprint():
 
     # Test if blueprint contains all the endpoints
     blueprint_routes: List[str] = get_routes_from_blueprint(blueprint)
+
     for route in routes:
         assert route in blueprint_routes
 

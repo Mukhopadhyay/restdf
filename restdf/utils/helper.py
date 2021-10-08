@@ -1,5 +1,5 @@
 import sys
-from typing import Optional
+from typing import Optional, List
 
 # Third-party modules
 import psutil
@@ -38,8 +38,28 @@ def get_index(filename: str) -> dict:
                 'description': ''
             },
             {
+                'name': '/dtypes',
+                'type': ['GET'],
+                'description': ''
+            },
+            {
                 'name': '/value_counts/<column>',
                 'type': ['GET'],
+                'description': ''
+            },
+            {
+                'name': '/nulls',
+                'type': ['GET'],
+                'description': ''
+            },
+            {
+                'name': '/head',
+                'type': ['POST'],
+                'description': ''
+            },
+            {
+                'name': '/sample',
+                'type': ['POST'],
                 'description': ''
             }
         ]
@@ -111,10 +131,19 @@ def get_dataframe_info(df: pd.DataFrame) -> list:
 def get_value_counts(df: pd.DataFrame, column: str) -> dict:
     return df[column].value_counts().to_dict()
 
-def get_dataframe_head(df: pd.DataFrame, n: Optional[int] = 5) -> dict:
+def get_dataframe_head(df: pd.DataFrame, n: Optional[int] = 5) -> List[dict]:
     response = []
-    for index, row in df.head(n).astype(str).iterrows():
+    for index, row in df.head(n).iterrows():
         d = row.to_dict()
         d.update({'_index': index})
         response.append(d)
     return response
+
+def get_dataframe_sample(df, request_body: dict) -> List[dict]:
+    response = []
+    for index, row in df.sample(**request_body).iterrows():
+        d = row.to_dict()
+        d.update({'_index': index})
+        response.append(d)
+    return response
+
