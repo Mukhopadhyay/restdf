@@ -1,4 +1,5 @@
 import sys
+from typing import Optional
 
 # Third-party modules
 import psutil
@@ -109,3 +110,11 @@ def get_dataframe_info(df: pd.DataFrame) -> list:
 
 def get_value_counts(df: pd.DataFrame, column: str) -> dict:
     return df[column].value_counts().to_dict()
+
+def get_dataframe_head(df: pd.DataFrame, n: Optional[int] = 5) -> dict:
+    response = []
+    for index, row in df.head(n).astype(str).iterrows():
+        d = row.to_dict()
+        d.update({'_index': index})
+        response.append(d)
+    return response
