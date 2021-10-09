@@ -7,7 +7,6 @@ import flask
 import pandas as pd
 from flask_cors import cross_origin
 from flask import Blueprint, jsonify, request, Response
-from pandas.core.frame import DataFrame
 
 # RestDF modules
 from ..utils import helper, exceptions
@@ -132,3 +131,23 @@ def get_df_sample() -> Response:
     )
     return jsonify(df_sample_data)
 
+@cross_origin
+@flask_blueprint.route('/values/<column_name>', methods=['POST'])
+def get_column_value(column_name: str) -> Response:
+    global _total_requests; _total_requests += 1
+    global _values_requests; _values_requests += 1
+    request_body = request.get_json()
+    request_body = request_body if isinstance(request_body, dict) else {}
+    try:
+        values = helper.get_column_value(
+            dataframe, column_name, request_body
+        )
+    except KeyError:
+        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+    else:
+        return jsonify(values)
+
+# Isin endpoint
+# Equals endpoint
+# Not equals endpoint
+# StringFind endpoint

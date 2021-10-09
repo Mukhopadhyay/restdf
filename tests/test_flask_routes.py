@@ -27,7 +27,8 @@ routes = [
     '/value_counts/<column>',
     '/nulls',
     '/head',
-    '/sample'
+    '/sample',
+    '/values/<column_name>'
 ]
 
 def get_routes_from_blueprint(blueprint: Blueprint):

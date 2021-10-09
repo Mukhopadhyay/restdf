@@ -1,5 +1,5 @@
 import sys
-from typing import Optional, List
+from typing import Optional, List, Union
 
 # Third-party modules
 import psutil
@@ -59,6 +59,11 @@ def get_index(filename: str) -> dict:
             },
             {
                 'name': '/sample',
+                'type': ['POST'],
+                'description': ''
+            },
+            {
+                'name': '/values/<column_name>',
                 'type': ['POST'],
                 'description': ''
             }
@@ -147,3 +152,9 @@ def get_dataframe_sample(df, request_body: dict) -> List[dict]:
         response.append(d)
     return response
 
+
+def get_column_value(df, column_name: str, request_body: dict) -> Union[List[object], dict]:
+    if request_body.get('add_index', False):
+        return df[column_name].head(request_body.get('n')).to_dict()
+    else: 
+        return df[column_name].head(request_body.get('n')).tolist()
