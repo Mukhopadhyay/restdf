@@ -6,7 +6,8 @@ from datetime import datetime
 import flask
 import pandas as pd
 from flask_cors import cross_origin
-from flask import Blueprint, jsonify, request, Response
+from flasgger import Swagger, swag_from
+from flask import Flask, Blueprint, jsonify, request, Response
 
 # RestDF modules
 from ..utils import helper, exceptions
@@ -14,7 +15,10 @@ from ..utils import helper, exceptions
 
 dataframe: pd.DataFrame = None
 file_name: str = None
+app: Flask = Flask(__name__)
 flask_blueprint = Blueprint('restdf', __name__)
+
+swagger = Swagger(app)
 
 # Runtime info variables
 _runtime        : float = time.time()
@@ -22,7 +26,7 @@ _running_since  : str   = str(datetime.now())
 _total_requests : int   = 0
 _values_requests: int   = 0
 
-def get_flask_blueprint(df: pd.DataFrame, fname: str) -> Blueprint:
+def get_flask_app(df: pd.DataFrame, fname: str) -> Blueprint:
     global dataframe
     global file_name
     if isinstance(df, pd.DataFrame):
@@ -30,20 +34,22 @@ def get_flask_blueprint(df: pd.DataFrame, fname: str) -> Blueprint:
         file_name = fname
     else:
         raise TypeError(f'DataFrame expected, found {type(df)}')
-    return flask_blueprint
+    return app
 
 ######################################################################
 #                            ROUTES                                  #
 ######################################################################
 
 @cross_origin
-@flask_blueprint.route('/', methods=['GET'])
+@app.route('/', methods=['GET'])
+@swag_from('flask_schemas/index.yml')
 def root() -> Response:
     global _total_requests; _total_requests += 1
     return jsonify(helper.get_index(file_name))
 
 @cross_origin
-@flask_blueprint.route('/stats', methods=['GET'])
+@app.route('/stats', methods=['GET'])
+@swag_from('flask_schemas/stats.yml')
 def get_stats() -> Response:
     global _total_requests; _total_requests += 1
     stats = {
@@ -56,13 +62,14 @@ def get_stats() -> Response:
     return jsonify(helper.get_stats('Flask', flask.__version__, stats))
 
 @cross_origin
-@flask_blueprint.route('/columns', methods=['GET'])
+@swag_from('flask_schemas/columns.yml')
+@app.route('/columns', methods=['GET'])
 def get_columns() -> Response:
     global _total_requests; _total_requests += 1
     return jsonify({'columns': helper.get_dataframe_columns(dataframe)})
 
 @cross_origin
-@flask_blueprint.route('/describe', methods=['POST'])
+@app.route('/describe', methods=['POST'])
 def get_describe() -> Response:
     global _total_requests; _total_requests += 1
     request_body = request.get_json()
@@ -77,7 +84,7 @@ def get_describe() -> Response:
         return jsonify({'description': df_description})
 
 @cross_origin
-@flask_blueprint.route('/info', methods=['GET'])
+@app.route('/info', methods=['GET'])
 def get_info() -> Response:
     global _total_requests; _total_requests += 1
     
@@ -85,7 +92,7 @@ def get_info() -> Response:
     return jsonify({'info': info, 'shape': dataframe.shape})
 
 @cross_origin
-@flask_blueprint.route('/dtypes', methods=['GET'])
+@app.route('/dtypes', methods=['GET'])
 def get_dtypes() -> Response:
     global _total_requests; _total_requests += 1
     
@@ -94,7 +101,7 @@ def get_dtypes() -> Response:
     )
 
 @cross_origin
-@flask_blueprint.route('/value_counts/<column>', methods=['GET'])
+@app.route('/value_counts/<column>', methods=['GET'])
 def get_value_counts(column: str):
     global _total_requests; _total_requests += 1
     
@@ -106,7 +113,7 @@ def get_value_counts(column: str):
         return jsonify({'column': column, 'value_counts': vc})
 
 @cross_origin
-@flask_blueprint.route('/nulls', methods=['GET'])
+@app.route('/nulls', methods=['GET'])
 def get_nulls() -> Response:
     global _total_requests; _total_requests += 1
     
@@ -114,7 +121,7 @@ def get_nulls() -> Response:
     return jsonify(nulls)
 
 @cross_origin
-@flask_blueprint.route('/head', methods=['POST'])
+@app.route('/head', methods=['POST'])
 def get_df_head() -> Response:
     global _total_requests; _total_requests += 1
     
@@ -126,7 +133,7 @@ def get_df_head() -> Response:
     return jsonify(df_head_data)
 
 @cross_origin
-@flask_blueprint.route('/sample', methods=['POST'])
+@app.route('/sample', methods=['POST'])
 def get_df_sample() -> Response:
     global _total_requests; _total_requests += 1
     
@@ -138,7 +145,7 @@ def get_df_sample() -> Response:
     return jsonify(df_sample_data)
 
 @cross_origin
-@flask_blueprint.route('/values/<column_name>', methods=['POST'])
+@app.route('/values/<column_name>', methods=['POST'])
 def get_column_value(column_name: str) -> Response:
     global _total_requests; _total_requests += 1
     global _values_requests; _values_requests += 1
@@ -163,7 +170,7 @@ Request body:
 }
 """
 @cross_origin
-@flask_blueprint.route('/isin/<column_name>', methods=['POST'])
+@app.route('/isin/<column_name>', methods=['POST'])
 def get_isin_values(column_name: str) -> Response:
     global _total_requests; _total_requests += 1
     global _values_requests; _values_requests += 1
@@ -181,7 +188,7 @@ def get_isin_values(column_name: str) -> Response:
 
 
 @cross_origin
-@flask_blueprint.route('/notin/<column_name>', methods=['POST'])
+@app.route('/notin/<column_name>', methods=['POST'])
 def get_notin_values(column_name: str) -> Response:
     global _total_requests; _total_requests += 1
     global _values_requests; _values_requests += 1
@@ -205,7 +212,7 @@ Request body:
 }
 """
 @cross_origin
-@flask_blueprint.route('/equals/<column_name>', methods=['POST'])
+@app.route('/equals/<column_name>', methods=['POST'])
 def get_equal_values(column_name: str) -> Response:
     global _total_requests; _total_requests += 1
     global _values_requests; _values_requests += 1
@@ -223,7 +230,7 @@ def get_equal_values(column_name: str) -> Response:
         return jsonify(values)
 
 @cross_origin
-@flask_blueprint.route('/not_equals/<column_name>', methods=['POST'])
+@app.route('/not_equals/<column_name>', methods=['POST'])
 def get_not_equal_values(column_name: str) -> Response:
     global _total_requests; _total_requests += 1
     global _values_requests; _values_requests += 1
@@ -251,7 +258,7 @@ Request Body:
 }
 """
 @cross_origin
-@flask_blueprint.route('/find_string/<column_name>', methods=['POST'])
+@app.route('/find_string/<column_name>', methods=['POST'])
 def get_find_string_values(column_name: str) -> Response:
     global _total_requests; _total_requests += 1
     global _values_requests; _values_requests += 1

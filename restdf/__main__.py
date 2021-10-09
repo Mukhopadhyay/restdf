@@ -27,12 +27,10 @@ def main() -> None:
     # Reading the dataframe
     dataframe = io.read_dataframe(df_path)
 
-    # Flask endpoint
-    api_routes = flask_routes.get_flask_blueprint(
-        df=dataframe, 
-        fname=os.path.split(df_path)[-1]
+    app = flask_routes.get_flask_app(
+       df=dataframe, 
+       fname=os.path.split(df_path)[-1]
     )
-    app.register_blueprint(api_routes)
 
     # Start the API
     CORS(app=app)

@@ -1,0 +1,14 @@
+summary: "Get the dataframe columns"
+description: "Performs <code>df.columns</code> & returns the available columns in the dataframe."
+tags:
+  - 'DataFrame'
+consumes:
+  - 'application/json'
+produces:
+  - 'application/json'
+responses:
+  200:
+    description: "Success"
+    schema:
+      type: "object"
+      example: {"columns": ['Name', 'Pclass', 'Cabin']}

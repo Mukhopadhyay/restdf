@@ -1,0 +1,14 @@
+summary: "Provides basic Stats about the currently running API"
+description: "Return current sys info, API hit counts etc"
+tags:
+  - 'Docs'
+consumes:
+  - 'application/json'
+produces:
+  - 'application/json'
+responses:
+  200:
+    description: "Success"
+    schema:
+      type: "object"
+      example: {'Server': {'name': "Flask",'version': "1.0.0"},'Python': {'version': "3.9.0"}}

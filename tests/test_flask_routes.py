@@ -43,29 +43,13 @@ def get_routes_from_blueprint(blueprint: Blueprint):
 
 @pytest.mark.routes
 @pytest.mark.flask
-def test_get_flask_blueprint():
-    path = 'tests/test_data/test.xlsx'
-    df = pd.read_excel(path)
-    blueprint = flask_routes.get_flask_blueprint(df, path)
-
-    # Test if the return type is correct
-    assert isinstance(blueprint, Blueprint)
-
-    # Test if blueprint contains all the endpoints
-    blueprint_routes: List[str] = get_routes_from_blueprint(blueprint)
-
-    for route in routes:
-        assert route in blueprint_routes
-
-@pytest.mark.routes
-@pytest.mark.flask
 def test_root(flask_client):
     response = flask_client.get('/')
     response.status_code == 200
 
     response_dict = json.loads(response.data)
 
-    assert response_dict['filename'] == 'test.pkl'
+    assert response_dict['filename'] == 'test.csv'
     assert 'endpoints' in response_dict
 
     resp_endp = [_['name'] for _ in response_dict['endpoints']]
