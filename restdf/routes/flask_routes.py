@@ -80,6 +80,7 @@ def get_describe() -> Response:
 @flask_blueprint.route('/info', methods=['GET'])
 def get_info() -> Response:
     global _total_requests; _total_requests += 1
+    
     info = helper.get_dataframe_info(dataframe)
     return jsonify({'info': info, 'shape': dataframe.shape})
 
@@ -87,6 +88,7 @@ def get_info() -> Response:
 @flask_blueprint.route('/dtypes', methods=['GET'])
 def get_dtypes() -> Response:
     global _total_requests; _total_requests += 1
+    
     return jsonify(
         {k: str(v) for (k,v) in dataframe.dtypes.to_dict().items()}
     )
@@ -95,6 +97,7 @@ def get_dtypes() -> Response:
 @flask_blueprint.route('/value_counts/<column>', methods=['GET'])
 def get_value_counts(column: str):
     global _total_requests; _total_requests += 1
+    
     try:
         vc = helper.get_value_counts(dataframe, column)
     except KeyError:
@@ -106,6 +109,7 @@ def get_value_counts(column: str):
 @flask_blueprint.route('/nulls', methods=['GET'])
 def get_nulls() -> Response:
     global _total_requests; _total_requests += 1
+    
     nulls = pd.isna(dataframe).sum().to_dict()
     return jsonify(nulls)
 
@@ -113,6 +117,7 @@ def get_nulls() -> Response:
 @flask_blueprint.route('/head', methods=['POST'])
 def get_df_head() -> Response:
     global _total_requests; _total_requests += 1
+    
     request_body = request.get_json()
     request_body = request_body if isinstance(request_body, dict) else {}
     df_head_data = helper.get_dataframe_head(
@@ -124,6 +129,7 @@ def get_df_head() -> Response:
 @flask_blueprint.route('/sample', methods=['POST'])
 def get_df_sample() -> Response:
     global _total_requests; _total_requests += 1
+    
     request_body = request.get_json()
     request_body = request_body if isinstance(request_body, dict) else {}
     df_sample_data = helper.get_dataframe_sample(
@@ -136,6 +142,7 @@ def get_df_sample() -> Response:
 def get_column_value(column_name: str) -> Response:
     global _total_requests; _total_requests += 1
     global _values_requests; _values_requests += 1
+    
     request_body = request.get_json()
     request_body = request_body if isinstance(request_body, dict) else {}
     try:
@@ -147,7 +154,121 @@ def get_column_value(column_name: str) -> Response:
     else:
         return jsonify(values)
 
-# Isin endpoint
-# Equals endpoint
-# Not equals endpoint
-# StringFind endpoint
+
+"""
+Request body:
+{
+    values: [1,2,3],
+    as_string: true
+}
+"""
+@cross_origin
+@flask_blueprint.route('/isin/<column_name>', methods=['POST'])
+def get_isin_values(column_name: str) -> Response:
+    global _total_requests; _total_requests += 1
+    global _values_requests; _values_requests += 1
+    
+    request_body = request.get_json()
+    request_body = request_body if isinstance(request_body, dict) else {}
+    try:
+        values = helper.get_isin_values(
+            dataframe, column_name, request_body
+        )
+    except KeyError:
+        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+    else:
+        return jsonify(values)
+
+
+@cross_origin
+@flask_blueprint.route('/notin/<column_name>', methods=['POST'])
+def get_notin_values(column_name: str) -> Response:
+    global _total_requests; _total_requests += 1
+    global _values_requests; _values_requests += 1
+    
+    request_body = request.get_json()
+    request_body = request_body if isinstance(request_body, dict) else {}
+    try:
+        values = helper.get_notin_values(
+            dataframe, column_name, request_body
+        )
+    except KeyError:
+        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+    else:
+        return jsonify(values)
+
+"""
+Request body:
+{
+    value: "1",
+    as_string: true
+}
+"""
+@cross_origin
+@flask_blueprint.route('/equals/<column_name>', methods=['POST'])
+def get_equal_values(column_name: str) -> Response:
+    global _total_requests; _total_requests += 1
+    global _values_requests; _values_requests += 1
+    
+    request_body = request.get_json()
+    request_body = request_body if isinstance(request_body, dict) else {}
+    
+    try:
+        values = helper.get_equal_values(
+            dataframe, column_name, request_body
+        )
+    except KeyError:
+        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+    else:
+        return jsonify(values)
+
+@cross_origin
+@flask_blueprint.route('/not_equals/<column_name>', methods=['POST'])
+def get_not_equal_values(column_name: str) -> Response:
+    global _total_requests; _total_requests += 1
+    global _values_requests; _values_requests += 1
+    
+    request_body = request.get_json()
+    request_body = request_body if isinstance(request_body, dict) else {}
+    
+    try:
+        values = helper.get_not_equal_values(
+            dataframe, column_name, request_body
+        )
+    except KeyError:
+        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+    else:
+        return jsonify(values)
+
+
+"""
+Request Body:
+{
+    pattern: str
+    case: bool
+    flags: int (default 0) (no flags)
+    regex: bool
+}
+"""
+@cross_origin
+@flask_blueprint.route('/find_string/<column_name>', methods=['POST'])
+def get_find_string_values(column_name: str) -> Response:
+    global _total_requests; _total_requests += 1
+    global _values_requests; _values_requests += 1
+    
+    request_body = request.get_json()
+    request_body = request_body if isinstance(request_body, dict) else {}
+
+    try:
+        used_kwargs, values, num_rec_found = helper.get_find_string_values(
+            dataframe, column_name, request_body
+        )
+    except KeyError:
+        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+    else:
+        return jsonify({
+            'values': values,
+            'option_used': used_kwargs,
+            'num': num_rec_found
+        })
+

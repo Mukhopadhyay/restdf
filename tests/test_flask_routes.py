@@ -28,7 +28,12 @@ routes = [
     '/nulls',
     '/head',
     '/sample',
-    '/values/<column_name>'
+    '/values/<column_name>',
+    '/isin/<column_name>',
+    '/notin/<column_name>',
+    '/equals/<column_name>',
+    '/not_equals/<column_name>',
+    '/find_string/<column_name>'
 ]
 
 def get_routes_from_blueprint(blueprint: Blueprint):
