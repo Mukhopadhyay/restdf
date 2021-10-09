@@ -1,0 +1,390 @@
+{
+	"info": {
+		"_postman_id": "fa4d141a-44fb-4abd-8c6f-4d26336564b3",
+		"name": "restdf-collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Flask",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/stats",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Columns",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/columns",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"columns"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Describe",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"percentiles\": [0.01, 0.25, 0.75, 0.99],\n    \"include\": \"all\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/describe",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"describe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/info",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dtypes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/dtypes",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"dtypes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Value Counts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/value_counts/SibSp",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"value_counts",
+								"SibSp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Nulls",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/nulls",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"nulls"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Head",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"n\": null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/head",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"head"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sample",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"n\": 2,\n    \"random_state\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/sample",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"sample"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Values",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"n\": 5,\n    \"add_index\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/values/Name",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"values",
+								"Name"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/isin - Values in the dataframe",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"values\": [1,2],\n    \"as_string\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/isin/Pclass",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"isin",
+								"Pclass"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/notin - Not in the dataframe",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"values\": [1, 2],\n    \"as_string\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/notin/Pclass",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"notin",
+								"Pclass"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Equals",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": 1218,\n    \"as_string\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/equals/PassengerId",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"equals",
+								"PassengerId"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Not Equals",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": \"male\",\n    \"as_string\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/not_equals/Sex",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"not_equals",
+								"Sex"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/find_string - Find String from DF columns",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pat\": \"mrs.\",\n    \"case\": false,\n    \"flags\": 2,\n    \"na\": false,\n    \"regex\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/find_string/Cabin",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"find_string",
+								"Cabin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
