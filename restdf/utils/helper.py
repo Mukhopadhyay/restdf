@@ -1,5 +1,5 @@
 import sys
-from typing import Optional, List
+from typing import Optional, List, Union, Tuple
 
 # Third-party modules
 import psutil
@@ -61,6 +61,41 @@ def get_index(filename: str) -> dict:
                 'name': '/sample',
                 'type': ['POST'],
                 'description': ''
+            },
+            {
+                'name': '/values/<column_name>',
+                'type': ['POST'],
+                'description': ''
+            },
+            {
+                'name': '/values/<column_name>',
+                'type': ['POST'],
+                'decription': ''
+            },
+            {
+                'name': '/isin/<column_name>',
+                'type': ['POST'],
+                'decription': ''
+            },
+            {
+                'name': '/notin/<column_name>',
+                'type': ['POST'],
+                'decription': ''
+            },
+            {
+                'name': '/equals/<column_name>',
+                'type': ['POST'],
+                'decription': ''
+            },
+            {
+                'name': '/not_equals/<column_name>',
+                'type': ['POST'],
+                'decription': ''
+            },
+            {
+                'name': '/find_string/<column_name>',
+                'type': ['POST'],
+                'decription': ''
             }
         ]
     }
@@ -139,11 +174,96 @@ def get_dataframe_head(df: pd.DataFrame, n: Optional[int] = 5) -> List[dict]:
         response.append(d)
     return response
 
-def get_dataframe_sample(df, request_body: dict) -> List[dict]:
+def get_dataframe_sample(df: pd.DataFrame, request_body: dict) -> List[dict]:
     response = []
     for index, row in df.sample(**request_body).iterrows():
         d = row.to_dict()
         d.update({'_index': index})
         response.append(d)
     return response
+
+
+def get_column_value(df: pd.DataFrame, column_name: str, request_body: dict) -> Union[List[object], dict]:
+    if request_body.get('add_index', False):
+        return df[column_name].head(request_body.get('n')).to_dict()
+    else: 
+        return df[column_name].head(request_body.get('n')).tolist()
+
+
+def get_isin_values(df: pd.DataFrame, column_name: str, request_body: dict) -> List[dict]:
+    values = request_body.get('values', [])
+    
+    temp_df = df[df[column_name].astype(str).isin(values)] if (
+        request_body.get('as_string')
+    ) else df[df[column_name].isin(values)]
+    
+    response = []
+    for index, row in temp_df.iterrows():
+        d = row.to_dict()
+        d.update({'_index': index})
+        response.append(d)
+    return response
+
+def get_notin_values(df: pd.DataFrame, column_name: str, request_body: dict) -> List[dict]:
+    values = request_body.get('values', [])
+    
+    temp_df = df[~(df[column_name].astype(str).isin(values))] if (
+        request_body.get('as_string')
+    ) else df[~(df[column_name].isin(values))]
+    
+    response = []
+    for index, row in temp_df.iterrows():
+        d = row.to_dict()
+        d.update({'_index': index})
+        response.append(d)
+    return response
+
+def get_equal_values(df: pd.DataFrame, column_name: str, request_body: dict) -> List[dict]:
+    value = request_body.get('value')
+    
+    temp_df = df[df[column_name].astype(str) == value] if (
+        request_body.get('as_string')
+    ) else df[df[column_name] == value]
+    
+    response = []
+    for index, row in temp_df.iterrows():
+        d = row.to_dict()
+        d.update({'_index': index})
+        response.append(d)
+    return response
+
+def get_not_equal_values(df: pd.DataFrame, column_name: str, request_body: dict) -> List[dict]:
+    value = request_body.get('value')
+    
+    temp_df = df[~(df[column_name].astype(str) == value)] if (
+        request_body.get('as_string')
+    ) else df[~(df[column_name] == value)]
+    
+    response = []
+    for index, row in temp_df.iterrows():
+        d = row.to_dict()
+        d.update({'_index': index})
+        response.append(d)
+    return response
+
+def get_find_string_values(df: pd.DataFrame, column_name: str, request_body: dict) -> Tuple[dict, List[dict], int]:
+
+    options = {
+        'pat': request_body.get('pattern', ''),
+        'case': request_body.get('case', False),
+        'flags': request_body.get('flags', 0),
+        'na': request_body.get('na', False),
+        'regex': request_body.get('regex', True)
+    }
+    
+    temp_df = df[df[column_name].str.contains(**options)]
+    
+    response = []
+    for index, row in temp_df.iterrows():
+        d = row.to_dict()
+        d.update({'_index': index})
+        response.append(d)
+    
+    
+    return options, response, temp_df.shape[0]
 

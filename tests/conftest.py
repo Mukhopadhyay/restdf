@@ -8,7 +8,7 @@ from flask import Flask
 
 from restdf.utils import io
 from restdf.utils import exceptions
-from restdf.routes.flask_routes import get_flask_blueprint
+from restdf.routes.flask_routes import get_flask_app
 
 @pytest.fixture
 def extension_paths():
@@ -38,10 +38,10 @@ def df_read_exceptions():
 
 @pytest.fixture
 def flask_client():
-    df = io.read_from_pickle('tests/test_data/test.pkl')
-    bp = get_flask_blueprint(df, 'test.pkl')
-    app = Flask(__name__)
-    app.register_blueprint(bp)
+    df = io.read_from_csv('tests/test_data/test.csv')
+
+    app = get_flask_app(df, 'test.csv')
+    
     app.config['TESTING'] = True
 
     with app.app_context():
