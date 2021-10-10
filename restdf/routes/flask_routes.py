@@ -69,6 +69,7 @@ def get_columns() -> Response:
     return jsonify({'columns': helper.get_dataframe_columns(dataframe)})
 
 @cross_origin
+@swag_from('flask_schemas/describe.yml')
 @app.route('/describe', methods=['POST'])
 def get_describe() -> Response:
     global _total_requests; _total_requests += 1
@@ -84,6 +85,7 @@ def get_describe() -> Response:
         return jsonify({'description': df_description})
 
 @cross_origin
+@swag_from('flask_schemas/info.yml')
 @app.route('/info', methods=['GET'])
 def get_info() -> Response:
     global _total_requests; _total_requests += 1
@@ -92,25 +94,27 @@ def get_info() -> Response:
     return jsonify({'info': info, 'shape': dataframe.shape})
 
 @cross_origin
+@swag_from('flask_schemas/dtypes.yml')
 @app.route('/dtypes', methods=['GET'])
 def get_dtypes() -> Response:
     global _total_requests; _total_requests += 1
     
     return jsonify(
-        {k: str(v) for (k,v) in dataframe.dtypes.to_dict().items()}
+        {'dtypes': {k: str(v) for (k,v) in dataframe.dtypes.to_dict().items()}}
     )
 
 @cross_origin
-@app.route('/value_counts/<column>', methods=['GET'])
-def get_value_counts(column: str):
+@swag_from('flask_schemas/value_counts.yml')
+@app.route('/value_counts/<column_name>', methods=['GET'])
+def get_value_counts(column_name: str):
     global _total_requests; _total_requests += 1
     
     try:
-        vc = helper.get_value_counts(dataframe, column)
+        vc = helper.get_value_counts(dataframe, column_name)
     except KeyError:
-        return jsonify({'error': f'Column "{column}" is not present in the dataframe. Please check /columns'})
+        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
     else:
-        return jsonify({'column': column, 'value_counts': vc})
+        return jsonify({'column': column_name, 'value_counts': vc})
 
 @cross_origin
 @app.route('/nulls', methods=['GET'])

@@ -140,7 +140,9 @@ def get_dataframe_descriptions(df: pd.DataFrame, **kwargs) -> dict:
     try:
         describe_dict: dict = df.describe(
             percentiles=kwargs.get('percentiles'),
-            include=kwargs.get('include')
+            include=kwargs.get('include'),
+            exclude=kwargs.get('exclude'),
+            datetime_is_numeric=kwargs.get('datetime_is_numeric', False)
         ).to_dict()
     except Exception as err:
         raise exceptions.InvalidRequestBodyError(str(err))

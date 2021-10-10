@@ -24,7 +24,7 @@ routes = [
     '/describe',
     '/info',
     '/dtypes',
-    '/value_counts/<column>',
+    '/value_counts/<column_name>',
     '/nulls',
     '/head',
     '/sample',
