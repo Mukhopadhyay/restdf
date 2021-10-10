@@ -1,7 +1,7 @@
 summary: "Describes different properties of the dataframe."
 description: "This endpoint returns the response from <code>df.describe()</code> & returns the result."
 tags:
-  - 'DataFrame'
+  - 'Metadata'
 consumes:
   - 'application/json'
 produces:

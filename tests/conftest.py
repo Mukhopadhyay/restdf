@@ -36,7 +36,7 @@ def df_read_exceptions():
         ('tests/test_data/int.pkl', exceptions.DataFrameError)
     ]
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def flask_client():
     df = io.read_from_csv('tests/test_data/test.csv')
 

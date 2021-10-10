@@ -1,7 +1,7 @@
 summary: "Returns contents of a dataframe column"
 description: "For the given column name, this endpoint returns the top 'n' values from the dataframe."
 tags:
-  - 'DataFrame'
+  - 'Data'
 consumes:
   - 'application/json'
 produces:

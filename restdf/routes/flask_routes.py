@@ -1,6 +1,7 @@
 # Built-in modules
 import time
 from datetime import datetime
+from typing import Optional
 
 # Third-party modules
 import flask
@@ -10,6 +11,7 @@ from flasgger import Swagger, swag_from
 from flask import Flask, Blueprint, jsonify, request, Response
 
 # RestDF modules
+from ..configs import config
 from ..utils import helper, exceptions
 
 
@@ -18,15 +20,13 @@ file_name: str = None
 app: Flask = Flask(__name__)
 flask_blueprint = Blueprint('restdf', __name__)
 
-swagger = Swagger(app)
-
 # Runtime info variables
 _runtime        : float = time.time()
 _running_since  : str   = str(datetime.now())
 _total_requests : int   = 0
 _values_requests: int   = 0
 
-def get_flask_app(df: pd.DataFrame, fname: str) -> Blueprint:
+def get_flask_app(df: pd.DataFrame, fname: str, api_title: Optional[str] = None) -> Blueprint:
     global dataframe
     global file_name
     if isinstance(df, pd.DataFrame):
@@ -34,6 +34,22 @@ def get_flask_app(df: pd.DataFrame, fname: str) -> Blueprint:
         file_name = fname
     else:
         raise TypeError(f'DataFrame expected, found {type(df)}')
+    
+    # Setting up SwaggerUI
+    
+    # Swagger template
+    flasgger_template = config.flasgger_template
+    flasgger_template['info']['title'] = f'{fname} API'
+    
+    # Swagger config
+    flasgger_config = config.flasgger_config    
+    app.config['SWAGGER'] = {
+        'title': api_title if api_title else f'{fname} API',
+        'uiversion': 3
+    }
+    
+    swagger = Swagger(app, template=flasgger_template, config=flasgger_config)
+
     return app
 
 ######################################################################
@@ -46,6 +62,7 @@ def get_flask_app(df: pd.DataFrame, fname: str) -> Blueprint:
 def root() -> Response:
     global _total_requests; _total_requests += 1
     return jsonify(helper.get_index(file_name))
+
 
 @cross_origin
 @app.route('/stats', methods=['GET'])
@@ -61,12 +78,14 @@ def get_stats() -> Response:
     }
     return jsonify(helper.get_stats('Flask', flask.__version__, stats))
 
+
 @cross_origin
 @swag_from('flask_schemas/columns.yml')
 @app.route('/columns', methods=['GET'])
 def get_columns() -> Response:
     global _total_requests; _total_requests += 1
     return jsonify({'columns': helper.get_dataframe_columns(dataframe)})
+
 
 @cross_origin
 @swag_from('flask_schemas/describe.yml')
@@ -84,6 +103,7 @@ def get_describe() -> Response:
     else:
         return jsonify({'description': df_description})
 
+
 @cross_origin
 @swag_from('flask_schemas/info.yml')
 @app.route('/info', methods=['GET'])
@@ -92,6 +112,7 @@ def get_info() -> Response:
     
     info = helper.get_dataframe_info(dataframe)
     return jsonify({'info': info, 'shape': dataframe.shape})
+
 
 @cross_origin
 @swag_from('flask_schemas/dtypes.yml')
@@ -102,6 +123,7 @@ def get_dtypes() -> Response:
     return jsonify(
         {'dtypes': {k: str(v) for (k,v) in dataframe.dtypes.to_dict().items()}}
     )
+
 
 @cross_origin
 @swag_from('flask_schemas/value_counts.yml')
@@ -116,6 +138,7 @@ def get_value_counts(column_name: str):
     else:
         return jsonify({'column': column_name, 'value_counts': vc})
 
+
 @cross_origin
 @swag_from('flask_schemas/nulls.yml')
 @app.route('/nulls', methods=['GET'])
@@ -124,6 +147,7 @@ def get_nulls() -> Response:
     
     nulls = pd.isna(dataframe).sum().to_dict()
     return jsonify({"nulls": nulls})
+
 
 @cross_origin
 @swag_from('flask_schemas/head.yml')
@@ -137,6 +161,7 @@ def get_df_head() -> Response:
         dataframe, n=request_body.get('n', 5)
     )
     return jsonify({'head': df_head_data})
+
 
 @cross_origin
 @swag_from('flask_schemas/sample.yml')
@@ -154,6 +179,7 @@ def get_df_sample() -> Response:
     )
     
     return jsonify({'sample': df_sample_data})
+
 
 @cross_origin
 @swag_from('flask_schemas/values.yml')
@@ -174,13 +200,6 @@ def get_column_value(column_name: str) -> Response:
         return jsonify({'values': values})
 
 
-"""
-Request body:
-{
-    values: [1,2,3],
-    as_string: true
-}
-"""
 @cross_origin
 @swag_from('flask_schemas/isin.yml')
 @app.route('/isin/<column_name>', methods=['POST'])
@@ -218,14 +237,9 @@ def get_notin_values(column_name: str) -> Response:
     else:
         return jsonify(values)
 
-"""
-Request body:
-{
-    value: "1",
-    as_string: true
-}
-"""
+
 @cross_origin
+@swag_from('flask_schemas/equals.yml')
 @app.route('/equals/<column_name>', methods=['POST'])
 def get_equal_values(column_name: str) -> Response:
     global _total_requests; _total_requests += 1
@@ -243,7 +257,9 @@ def get_equal_values(column_name: str) -> Response:
     else:
         return jsonify(values)
 
+
 @cross_origin
+@swag_from('flask_schemas/not_equals.yml')
 @app.route('/not_equals/<column_name>', methods=['POST'])
 def get_not_equal_values(column_name: str) -> Response:
     global _total_requests; _total_requests += 1
@@ -262,16 +278,8 @@ def get_not_equal_values(column_name: str) -> Response:
         return jsonify(values)
 
 
-"""
-Request Body:
-{
-    pattern: str
-    case: bool
-    flags: int (default 0) (no flags)
-    regex: bool
-}
-"""
 @cross_origin
+@swag_from('flask_schemas/find_string.yml')
 @app.route('/find_string/<column_name>', methods=['POST'])
 def get_find_string_values(column_name: str) -> Response:
     global _total_requests; _total_requests += 1

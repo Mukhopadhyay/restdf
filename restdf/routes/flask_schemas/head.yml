@@ -1,7 +1,7 @@
 summary: "Returns the head of the dataframe."
 description: "This endpoint returns the response from <code>df.head()</code> & returns the result."
 tags:
-  - 'DataFrame'
+  - 'Data'
 consumes:
   - 'application/json'
 produces:

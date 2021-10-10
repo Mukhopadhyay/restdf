@@ -1,7 +1,7 @@
 summary: "Returns rows where all column values are not within the array content"
 description: "For the given column name, this endpoint returns the rows where the values are not within the <code>values</code> array. Basically, the inverse of <code>/isin</code> endpoint."
 tags:
-  - 'DataFrame'
+  - 'Data'
 consumes:
   - 'application/json'
 produces:

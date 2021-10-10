@@ -1,7 +1,7 @@
 summary: "Value counts, returns frequently occurring elements of a column"
 description: "This endpoint returns the response from <code>series.value_counts()</code> & returns the result."
 tags:
-  - 'DataFrame'
+  - 'Metadata'
 consumes:
   - 'application/json'
 produces:

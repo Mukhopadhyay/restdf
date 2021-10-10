@@ -1,7 +1,7 @@
 summary: "Returns rows where all column values are within the array content"
 description: "For the given column name, this endpoint returns the rows where the values are within the <code>values</code> array"
 tags:
-  - 'DataFrame'
+  - 'Data'
 consumes:
   - 'application/json'
 produces:

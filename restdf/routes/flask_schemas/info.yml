@@ -1,7 +1,7 @@
 summary: "Returns some dataframe into (Datatypes, Non-null counts etc)"
 description: "This endpoint returns the response from <code>df.info()</code> & returns the result."
 tags:
-  - 'DataFrame'
+  - 'Metadata'
 consumes:
   - 'application/json'
 produces:

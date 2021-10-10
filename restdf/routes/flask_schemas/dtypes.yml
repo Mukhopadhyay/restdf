@@ -1,7 +1,7 @@
 summary: "Returns the datatypes of all columns"
 description: "This endpoint returns the response from <code>df.dtypes</code> & returns the result."
 tags:
-  - 'DataFrame'
+  - 'Metadata'
 consumes:
   - 'application/json'
 produces:

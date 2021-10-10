@@ -1,0 +1,29 @@
+summary: "Returns rows where all string values contains given pattern"
+description: "For the given column name, this endpoint returns the rows where the values (string DataTypes) for that column containg the given pattern. This uses the <code>str.contains()</code> method, please refer to <a href='https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.str.contains.html' target='_blank'>this</a> page for more details."
+tags:
+  - 'Data'
+consumes:
+  - 'application/json'
+produces:
+  - 'application/json'
+parameters:
+  - in: 'path'
+    name: 'column_name'
+    description: "Column on which we're performing the pattern matching"
+    required: 'true'
+    type: 'string'
+    example: 'Name'
+    default: ''
+
+  - in: 'body'
+    name: 'str.contains kwargs'
+    description: 'Keyword arguments for the method <code>str.contains()</code>'
+    schema:
+      type: object
+      example: {'pattern': 'miss.', 'case': false, 'flags': 0, 'na': false, 'regex': false}
+responses:
+  200:
+    description: "Success"
+    schema:
+      type: object
+      example: {'values': [{"Age": 20.0,"Cabin": NaN,"Embarked": "S","Fare": 7.775,"Name": "Nilsson, Miss. Berta Olivia"}]}

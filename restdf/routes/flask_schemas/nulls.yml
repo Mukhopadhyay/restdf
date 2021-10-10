@@ -1,7 +1,7 @@
 summary: "Returns the count of nulls in the dataframe"
 description: "This endpoint returns the response from <code>pd.isna(df)</code> & returns the result aggregated by sum"
 tags:
-  - 'DataFrame'
+  - 'Metadata'
 consumes:
   - 'application/json'
 produces:
