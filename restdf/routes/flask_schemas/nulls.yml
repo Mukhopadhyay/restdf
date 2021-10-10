@@ -1,0 +1,14 @@
+summary: "Returns the count of nulls in the dataframe"
+description: "This endpoint returns the response from <code>pd.isna(df)</code> & returns the result aggregated by sum"
+tags:
+  - 'DataFrame'
+consumes:
+  - 'application/json'
+produces:
+  - 'application/json'
+responses:
+  200:
+    description: "Success"
+    schema:
+      type: "object"
+      example: {'nulls': {"Age": 7,"Cabin": 22,"Embarked": 0,"Fare": 0}}

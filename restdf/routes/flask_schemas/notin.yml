@@ -1,0 +1,29 @@
+summary: "Returns rows where all column values are not within the array content"
+description: "For the given column name, this endpoint returns the rows where the values are not within the <code>values</code> array. Basically, the inverse of <code>/isin</code> endpoint."
+tags:
+  - 'DataFrame'
+consumes:
+  - 'application/json'
+produces:
+  - 'application/json'
+parameters:
+  - in: 'path'
+    name: 'column_name'
+    description: "Column on which we're performing the inverse-<code>isin</code> operation"
+    required: 'true'
+    type: 'string'
+    example: 'Name'
+    default: ''
+
+  - in: 'body'
+    name: 'values options'
+    description: 'Options required for getting the values.'
+    schema:
+      type: object
+      example: {'values': [3], 'as_string': false}
+responses:
+  200:
+    description: "Success"
+    schema:
+      type: object
+      example: {'values': [{"Age": 12.0,"Cabin": "F4","Embarked": "S","Fare": 39.0, "Name": "Becker, Miss. Ruth Elizabeth", "Parch": 1}]}

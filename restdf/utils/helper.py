@@ -43,7 +43,7 @@ def get_index(filename: str) -> dict:
                 'description': ''
             },
             {
-                'name': '/value_counts/<column>',
+                'name': '/value_counts/<column_name>',
                 'type': ['GET'],
                 'description': ''
             },
