@@ -1,7 +1,7 @@
 # Built-in modules
 import time
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 
 # Third-party modules
 import flask
@@ -16,9 +16,8 @@ from ..utils import helper, exceptions
 
 
 dataframe: pd.DataFrame = None
-file_name: str = None
+file_name: str = ''
 app: Flask = Flask(__name__)
-flask_blueprint = Blueprint('restdf', __name__)
 
 # Runtime info variables
 _runtime        : float = time.time()
@@ -26,7 +25,7 @@ _running_since  : str   = str(datetime.now())
 _total_requests : int   = 0
 _values_requests: int   = 0
 
-def get_flask_app(df: pd.DataFrame, fname: str, api_title: Optional[str] = None) -> Blueprint:
+def get_flask_app(df: pd.DataFrame, fname: str, api_title: Optional[str] = None) -> Flask:
     global dataframe
     global file_name
     if isinstance(df, pd.DataFrame):
@@ -39,12 +38,12 @@ def get_flask_app(df: pd.DataFrame, fname: str, api_title: Optional[str] = None)
     
     # Swagger template
     flasgger_template = config.flasgger_template
-    flasgger_template['info']['title'] = f'{fname} API'
+    flasgger_template['info']['title'] = f'{file_name} API'
     
     # Swagger config
     flasgger_config = config.flasgger_config    
     app.config['SWAGGER'] = {
-        'title': api_title if api_title else f'{fname} API',
+        'title': api_title if api_title else f'{file_name} API',
         'uiversion': 3
     }
     
@@ -299,5 +298,5 @@ def get_find_string_values(column_name: str) -> Response:
             'values': values,
             'option_used': used_kwargs,
             'num': num_rec_found
-        })
+        })        
 

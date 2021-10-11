@@ -1,4 +1,6 @@
-flasgger_template = {
+from typing import Dict, Any
+
+flasgger_template: Dict[str, Any] = {
   "swagger": "2.0",
   "info": {
     "title": "RestDF API",

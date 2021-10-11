@@ -2,7 +2,7 @@
 Exceptions for RestDf
 """
 
-from typing import Union
+from typing import Union, List
 
 
 class Error(Exception):
@@ -20,7 +20,7 @@ class PathError(Error):
         path:       Union[str, list]:   Path which caused the exception
         message:    str:                Explanation of the error.
     """
-    def __init__(self, path: Union[list, str], message: str) -> None:
+    def __init__(self, path: Union[List[str], str], message: str) -> None:
         super().__init__(f'[{self.__class__.__name__}] {message}\nPath: {path}')
         self.path = path
         self.message = message
@@ -37,7 +37,7 @@ class DataFrameError(Error):
         path:       Union[str, list]:   Path which lead to non df object.
         message:    str:                Explanation of the error.
     """
-    def __init__(self, path: Union[list, str], message: str) -> None:
+    def __init__(self, path: Union[List[str], str], message: str) -> None:
         super().__init__(f'[{self.__class__.__name__}] {message}\nPath: {path}')
         self.path = path
         self.message = message

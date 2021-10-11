@@ -6,14 +6,14 @@ Input/Output Methods
 # Built-in modules
 import os
 import pickle
-from typing import Union
+from typing import Union, List, Dict, Callable
 # Third-party modules
 import pandas as pd
 # RestDF modules
 from . import exceptions
 
 # Returns the extension of the file
-def get_extension(path: Union[list, str]) -> str:
+def get_extension(path: Union[List[str], str]) -> str:
     if type(path) not in [list, str]:
         raise TypeError(f'Argument path cannot be of type {type(path)}\n'\
                          'Accepted types: [list | str]')
@@ -41,15 +41,15 @@ def read_from_pickle(path: str) -> pd.DataFrame:
 
 
 # Dictionary for reading dataframe
-method_dictionary = {
+method_dictionary: Dict[str, Callable[..., pd.DataFrame]] = {
     'csv': read_from_csv,
     'xlsx': read_from_excel,
     'pkl': read_from_pickle,
     'pickle': read_from_pickle
 }
 
-def read_dataframe(path: Union[list, str]) -> pd.DataFrame:
-    path: str = os.path.join(*path) if isinstance(path, list) else path
+def read_dataframe(path: Union[List[str], str]) -> pd.DataFrame:
+    path = os.path.join(*path) if isinstance(path, list) else path
     if not os.path.exists(path):
         raise exceptions.PathError(
             path,
