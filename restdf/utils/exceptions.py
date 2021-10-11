@@ -50,7 +50,7 @@ class UnknownFileTypeError(Error):
     """
     Exception raised when the File extension is not known, or no such io
     method exists to deal with given extension.
-    
+
     Attributes:
         extension:  str:                Extension of the file.
         message:    str:                Explanation of the error.
@@ -59,7 +59,7 @@ class UnknownFileTypeError(Error):
         super().__init__(f'[{self.__class__.__name__}] {message}\nExtension: {extension}')
         self.extension = extension
         self.message = message
-        
+
     def __repr__(self) -> str:
         return f'[{self.__class__.__name__}] {self.message}\nExtension: {self.extension}'
 

@@ -8,6 +8,7 @@ import pandas as pd
 # RestDF modules
 from . import exceptions
 
+
 def get_index(filename: str) -> Dict[str, Any]:
     INDEX_RESPONSE = {
         'filename': filename,
@@ -101,40 +102,43 @@ def get_index(filename: str) -> Dict[str, Any]:
     }
     return INDEX_RESPONSE
 
-def get_stats(framework:str, framework_version:str, stats_dict: Dict[str, Any]) -> Dict[str, Any]:
+
+def get_stats(framework: str, framework_version: str, stats_dict: Dict[str, Any]) -> Dict[str, Any]:
     vm = psutil.virtual_memory()
     stats = {
         'Server': {
-            'name'   : framework,
+            'name': framework,
             'version': framework_version,
         },
         'Python': {
             'version': sys.version,
         },
         'Runtime': {
-            'filename'        : stats_dict.get('filename'),
+            'filename': stats_dict.get('filename'),
             'runtime_duration': stats_dict.get('runtime_duration'),
-            'running_since'   : stats_dict.get('running_since'),
+            'running_since': stats_dict.get('running_since'),
             'API': {
-                'total_requests'  : stats_dict.get('total_requests'),
+                'total_requests': stats_dict.get('total_requests'),
                 '/values_requests': stats_dict.get('values_requests'),
             }
         },
         'Device': {
             'cpu_percent': psutil.cpu_percent(),
             'Memory': {
-                'total'    : vm.total,
+                'total': vm.total,
                 'available': vm.available,
-                'percent'  : vm.percent,
-                'used'     : vm.used,
-                'free'     : vm.free
+                'percent': vm.percent,
+                'used': vm.used,
+                'free': vm.free
             }
         }
     }
     return stats
 
+
 def get_dataframe_columns(df: pd.DataFrame) -> List[str]:
     return list(df.columns.tolist())
+
 
 def get_dataframe_descriptions(df: pd.DataFrame, **kwargs) -> Dict[str, object]:
     try:
@@ -155,18 +159,21 @@ def get_dataframe_descriptions(df: pd.DataFrame, **kwargs) -> Dict[str, object]:
                     describe_dict[column][stat] = float(value)
         return describe_dict
 
+
 def get_dataframe_info(df: pd.DataFrame) -> List[Dict[str, Any]]:
     shape = df.shape[0]
-    info =[{
-        'index' : i,
+    info = [{
+        'index': i,
         'column': col,
-        'count' : int(shape - df[col].isna().sum()),
-        'dtype' : str(df[col].dtype)
+        'count': int(shape - df[col].isna().sum()),
+        'dtype': str(df[col].dtype)
     } for i, col in enumerate(df.columns)]
     return info
 
+
 def get_value_counts(df: pd.DataFrame, column: str) -> Dict[str, int]:
     return dict(df[column].value_counts().to_dict())
+
 
 def get_dataframe_head(df: pd.DataFrame, n: Optional[int] = 5) -> List[Dict[str, Any]]:
     response = []
@@ -175,6 +182,7 @@ def get_dataframe_head(df: pd.DataFrame, n: Optional[int] = 5) -> List[Dict[str,
         d.update({'_index': index})
         response.append(d)
     return response
+
 
 def get_dataframe_sample(df: pd.DataFrame, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
     response = []
@@ -188,45 +196,47 @@ def get_dataframe_sample(df: pd.DataFrame, request_body: Dict[str, Any]) -> List
 def get_column_value(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> Union[List[object], Dict[str, Any]]:
     if request_body.get('add_index', False):
         return dict(df[column_name].head(request_body.get('n')).to_dict())
-    else: 
+    else:
         return list(df[column_name].head(request_body.get('n')).tolist())
 
 
 def get_isin_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
     values = request_body.get('values', [])
-    
+
     temp_df = df[df[column_name].astype(str).isin(values)] if (
         request_body.get('as_string')
     ) else df[df[column_name].isin(values)]
-    
+
     response = []
     for index, row in temp_df.iterrows():
         d = row.to_dict()
         d.update({'_index': index})
         response.append(d)
     return response
+
 
 def get_notin_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
     values = request_body.get('values', [])
-    
+
     temp_df = df[~(df[column_name].astype(str).isin(values))] if (
         request_body.get('as_string')
     ) else df[~(df[column_name].isin(values))]
-    
+
     response = []
     for index, row in temp_df.iterrows():
         d = row.to_dict()
         d.update({'_index': index})
         response.append(d)
     return response
+
 
 def get_equal_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
     value = request_body.get('value')
-    
+
     temp_df = df[df[column_name].astype(str) == value] if (
         request_body.get('as_string')
     ) else df[df[column_name] == value]
-    
+
     response = []
     for index, row in temp_df.iterrows():
         d = row.to_dict()
@@ -234,19 +244,21 @@ def get_equal_values(df: pd.DataFrame, column_name: str, request_body: Dict[str,
         response.append(d)
     return response
 
+
 def get_not_equal_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
     value = request_body.get('value')
-    
+
     temp_df = df[~(df[column_name].astype(str) == value)] if (
         request_body.get('as_string')
     ) else df[~(df[column_name] == value)]
-    
+
     response = []
     for index, row in temp_df.iterrows():
         d = row.to_dict()
         d.update({'_index': index})
         response.append(d)
     return response
+
 
 def get_find_string_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> Tuple[Dict[str, Any], List[Dict[str, Any]], int]:
 
@@ -257,15 +269,13 @@ def get_find_string_values(df: pd.DataFrame, column_name: str, request_body: Dic
         'na': request_body.get('na', False),
         'regex': request_body.get('regex', True)
     }
-    
+
     temp_df = df[df[column_name].str.contains(**options)]
-    
+
     response = []
     for index, row in temp_df.iterrows():
         d = row.to_dict()
         d.update({'_index': index})
         response.append(d)
-    
-    
-    return options, response, temp_df.shape[0]
 
+    return options, response, temp_df.shape[0]
