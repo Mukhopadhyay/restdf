@@ -69,7 +69,7 @@ def test_get_stats(flask_client):
 
 @pytest.mark.routes
 @pytest.mark.flask
-def get_columns(flask_client):
+def test_get_columns(flask_client):
     response = flask_client.get('/columns')
     response.status_code == 200
 
@@ -90,4 +90,69 @@ def get_columns(flask_client):
     ]
     for column in columns:
         assert column in response_dict['columns']
+
+@pytest.mark.routes
+@pytest.mark.flask
+def test_get_describe(flask_client):
+    pass
+
+@pytest.mark.routes
+@pytest.mark.flask
+def test_get_info(flask_client):
+    pass
+
+@pytest.mark.routes
+@pytest.mark.flask
+def test_get_dtypes(flask_client):
+    pass
+
+@pytest.mark.routes
+@pytest.mark.flask
+def test_get_value_counts(flask_client):
+    pass
+
+@pytest.mark.routes
+@pytest.mark.flask
+def test_get_nulls(flask_client):
+    pass
+
+@pytest.mark.routes
+@pytest.mark.flask
+def test_get_head(flask_client):
+    pass
+
+@pytest.mark.routes
+@pytest.mark.flask
+def test_get_df_sample(flask_client):
+    pass
+
+@pytest.mark.routes
+@pytest.mark.flask
+def test_get_column_value(flask_client):
+    pass
+
+@pytest.mark.routes
+@pytest.mark.flask
+def test_get_isin_values(flask_client):
+    pass
+
+@pytest.mark.routes
+@pytest.mark.flask
+def test_get_notin_values(flask_client):
+    pass
+
+@pytest.mark.routes
+@pytest.mark.flask
+def test_get_equal_values(flask_client):
+    pass
+
+@pytest.mark.routes
+@pytest.mark.flask
+def test_get_not_equal_values(flask_client):
+    pass
+
+@pytest.mark.routes
+@pytest.mark.flask
+def test_get_find_string_values(flask_client):
+    pass
 
