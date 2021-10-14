@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "fa4d141a-44fb-4abd-8c6f-4d26336564b3",
-		"name": "restdf-collection",
+		"_postman_id": "8a1b822e-352e-4953-a979-840556ab49bc",
+		"name": "RestDF",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -301,7 +301,7 @@
 					"response": []
 				},
 				{
-					"name": "Equals",
+					"name": "/equals - Get DF rows for some column containing given value",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -329,7 +329,7 @@
 					"response": []
 				},
 				{
-					"name": "Not Equals",
+					"name": "/not_equals - Get DF rows that are not equal to some column value",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -385,6 +385,26 @@
 					"response": []
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

@@ -1,0 +1,14 @@
+summary: "Returns some dataframe into (Datatypes, Non-null counts etc)"
+description: "This endpoint returns the response from <code>df.info()</code> & returns the result."
+tags:
+  - 'Metadata'
+consumes:
+  - 'application/json'
+produces:
+  - 'application/json'
+responses:
+  200:
+    description: "Success"
+    schema:
+      type: "object"
+      example: {"info": [{"column": "PassengerId","count": 30,"dtype": "int64","index": 0}]}

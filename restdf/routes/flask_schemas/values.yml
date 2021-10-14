@@ -1,0 +1,29 @@
+summary: "Returns contents of a dataframe column"
+description: "For the given column name, this endpoint returns the top 'n' values from the dataframe."
+tags:
+  - 'Data'
+consumes:
+  - 'application/json'
+produces:
+  - 'application/json'
+parameters:
+  - in: 'path'
+    name: 'column_name'
+    description: 'Column for which we want the values.'
+    required: 'true'
+    type: 'string'
+    example: 'Name'
+    default: ''
+
+  - in: 'body'
+    name: 'inin options'
+    description: 'Options required for getting the values.'
+    schema:
+      type: object
+      example: {'n': 5, 'add_index': true}
+responses:
+  200:
+    description: "Success"
+    schema:
+      type: object
+      example: {'values': [{"Name": "Becker, Miss. Ruth Elizabeth","Pclass": 2,"_index": 0},{"Name": "Warren, Mr. Frank Manley","Pclass": 1,"_index": 1}]}

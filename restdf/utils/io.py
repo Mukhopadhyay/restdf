@@ -6,27 +6,30 @@ Input/Output Methods
 # Built-in modules
 import os
 import pickle
-from typing import Union
+from typing import Union, List, Dict, Callable
 # Third-party modules
 import pandas as pd
 # RestDF modules
 from . import exceptions
 
+
 # Returns the extension of the file
-def get_extension(path: Union[list, str]) -> str:
+def get_extension(path: Union[List[str], str]) -> str:
     if type(path) not in [list, str]:
-        raise TypeError(f'Argument path cannot be of type {type(path)}\n'\
-                         'Accepted types: [list | str]')
+        raise TypeError(f'Argument path cannot be of type {type(path)}\nAccepted types: [list | str]')
     elif isinstance(path, list):
         return os.path.splitext(path[-1])[-1][1:]
     else:
         return os.path.splitext(path)[-1][1:]
 
+
 def read_from_csv(path: str, **kwargs) -> pd.DataFrame:
     return pd.read_csv(path, **kwargs)
 
+
 def read_from_excel(path: str, **kwargs) -> pd.DataFrame:
     return pd.read_excel(path, **kwargs)
+
 
 def read_from_pickle(path: str) -> pd.DataFrame:
     with open(path, 'rb') as file:
@@ -35,21 +38,22 @@ def read_from_pickle(path: str) -> pd.DataFrame:
         return df
     else:
         raise exceptions.DataFrameError(
-            path, 
+            path,
             f'Unpickled object is of type: {type(df)}'
         )
 
 
 # Dictionary for reading dataframe
-method_dictionary = {
+method_dictionary: Dict[str, Callable[..., pd.DataFrame]] = {
     'csv': read_from_csv,
     'xlsx': read_from_excel,
     'pkl': read_from_pickle,
     'pickle': read_from_pickle
 }
 
-def read_dataframe(path: Union[list, str]) -> pd.DataFrame:
-    path: str = os.path.join(*path) if isinstance(path, list) else path
+
+def read_dataframe(path: Union[List[str], str]) -> pd.DataFrame:
+    path = os.path.join(*path) if isinstance(path, list) else path
     if not os.path.exists(path):
         raise exceptions.PathError(
             path,
@@ -65,7 +69,7 @@ def read_dataframe(path: Union[list, str]) -> pd.DataFrame:
             return df
         else:
             raise exceptions.UnknownFileTypeError(
-                extension=extension, 
-                message=f'Currently supported formats!\n'\
+                extension=extension,
+                message=f'Currently supported formats!\n'
                         f'{set(list(method_dictionary.keys()))}'
             )

@@ -1,0 +1,22 @@
+summary: "Describes different properties of the dataframe."
+description: "This endpoint returns the response from <code>df.describe()</code> & returns the result."
+tags:
+  - 'Metadata'
+consumes:
+  - 'application/json'
+produces:
+  - 'application/json'
+parameters:
+  - in: 'body'
+    name: 'describe() kwargs'
+    description: 'Kwargs for <code>pd.describe()</code>'
+    required: 'true'
+    schema:
+      type: 'object'
+      example: {'percentiles': [0.01, 0.25, 0.75, 0.99], 'include': ['int'], exclude: ['O'], 'datetime_is_numeric': false}
+responses:
+  200:
+    description: "Success"
+    schema:
+      type: "object"
+      example: {"describe": {"Age": {"25%": 18.0, "50%": 23.0, "75%": 38.5, "99%": 63.78, "count": 23.0, "min": 8.0, "max": 64.0}}}

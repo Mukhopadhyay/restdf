@@ -1,0 +1,21 @@
+summary: "Value counts, returns frequently occurring elements of a column"
+description: "This endpoint returns the response from <code>series.value_counts()</code> & returns the result."
+tags:
+  - 'Metadata'
+consumes:
+  - 'application/json'
+produces:
+  - 'application/json'
+parameters:
+  - in: "path"
+    name: "column_name"
+    description: "Column for which we want the value count."
+    required: 'true'
+    type: 'string'
+    example: 'SibSp'
+responses:
+  200:
+    description: "Success"
+    schema:
+      type: "object"
+      example: {"column": "SibSp","value_counts": {"0": 19,"1": 8,"2": 1,"4": 1,"5": 1}}
