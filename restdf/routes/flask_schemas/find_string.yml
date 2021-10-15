@@ -20,7 +20,7 @@ parameters:
     description: 'Keyword arguments for the method <code>str.contains()</code>'
     schema:
       type: "object"
-      example: {'pattern': 'miss.', 'case': false, 'flags': 0, 'na': false, 'regex': false}
+      example: {'pattern': 'miss.', 'case': false, 'flags': 0, 'na': false, 'regex': false, 'columns': ['Name', 'Age', 'Pclass'], 'index': true}
 responses:
   200:
     description: "Success"

@@ -12,7 +12,6 @@ from flask import Flask, jsonify, request, Response
 from ..configs import config
 from ..utils import helper, exceptions
 
-
 dataframe: Optional[pd.DataFrame] = None
 file_name: str = ''
 app: Flask = Flask(__name__)
@@ -27,7 +26,7 @@ _values_requests: int = 0
 def get_flask_app(df: pd.DataFrame, filename: str, api_title: Optional[str] = None) -> Flask:
     global dataframe
     global file_name
-    
+
     if isinstance(df, pd.DataFrame):
         dataframe = df
         file_name = filename
@@ -45,7 +44,6 @@ def get_flask_app(df: pd.DataFrame, filename: str, api_title: Optional[str] = No
         'title': api_title if api_title else f'{file_name} API',
         'uiversion': 3
     }
-
     Swagger(app, template=flasgger_template, config=flasgger_config)
 
     return app
@@ -178,7 +176,7 @@ def get_df_sample() -> Response:
     global _total_requests
     _total_requests += 1
 
-    request_body = request.get_data()
+    request_body = request.get_json()
 
     request_body = request_body if isinstance(request_body, dict) else {}
     df_sample_data = helper.get_dataframe_sample(
@@ -264,9 +262,9 @@ def get_equal_values(column_name: str) -> Response:
     request_body = request_body if isinstance(request_body, dict) else {}
 
     try:
-        values = helper.get_equal_values(
-            dataframe, column_name, request_body
-        )
+        values = helper.get_equal_values(dataframe,
+                                         column_name,
+                                         request_body)
     except KeyError:
         return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
     else:
@@ -304,7 +302,8 @@ def get_find_string_values(column_name: str) -> Response:
     _total_requests += 1
     _values_requests += 1
 
-    request_body = request.get_data()
+    request_body = request.get_json()
+
     request_body = request_body if isinstance(request_body, dict) else {}
 
     try:

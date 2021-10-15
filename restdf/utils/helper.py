@@ -178,7 +178,7 @@ def get_value_counts(df: pd.DataFrame, column: str) -> Dict[str, int]:
 def get_dataframe_head(df: pd.DataFrame, n: Optional[int] = 5) -> List[Dict[str, Any]]:
     response = []
     for index, row in df.head(n).iterrows():
-        d = row.to_dict()
+        d: Dict[str, Any] = row.to_dict()
         d.update({'_index': index})
         response.append(d)
     return response
@@ -232,15 +232,19 @@ def get_notin_values(df: pd.DataFrame, column_name: str, request_body: Dict[str,
 
 def get_equal_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
     value = request_body.get('value')
+    return_cols = request_body.get('columns')
 
     temp_df = df[df[column_name].astype(str) == value] if (
         request_body.get('as_string')
     ) else df[df[column_name] == value]
 
     response = []
+    temp_df = temp_df[return_cols] if return_cols else temp_df
+
     for index, row in temp_df.iterrows():
         d = row.to_dict()
-        d.update({'_index': index})
+        if request_body.get('index'):
+            d.update({'_index': index})
         response.append(d)
     return response
 
@@ -260,7 +264,9 @@ def get_not_equal_values(df: pd.DataFrame, column_name: str, request_body: Dict[
     return response
 
 
-def get_find_string_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> Tuple[Dict[str, Any], List[Dict[str, Any]], int]:
+def get_find_string_values(df: pd.DataFrame,
+                           column_name: str,
+                           request_body: Dict[str, Any]) -> Tuple[Dict[str, Any], List[Dict[str, Any]], int]:
 
     options = {
         'pat': request_body.get('pattern', ''),
@@ -269,13 +275,16 @@ def get_find_string_values(df: pd.DataFrame, column_name: str, request_body: Dic
         'na': request_body.get('na', False),
         'regex': request_body.get('regex', True)
     }
-
     temp_df = df[df[column_name].str.contains(**options)]
+
+    return_cols = request_body.get('columns')
+    temp_df = temp_df[return_cols] if return_cols else temp_df
 
     response = []
     for index, row in temp_df.iterrows():
         d = row.to_dict()
-        d.update({'_index': index})
+        if request_body.get('index'):
+            d.update({'_index': index})
         response.append(d)
 
     return options, response, temp_df.shape[0]
