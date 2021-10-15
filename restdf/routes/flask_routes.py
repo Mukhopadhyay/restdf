@@ -2,20 +2,18 @@
 import time
 from datetime import datetime
 from typing import Optional
-
 # Third-party modules
 import flask
 import pandas as pd
 from flask_cors import cross_origin
 from flasgger import Swagger, swag_from
 from flask import Flask, jsonify, request, Response
-
 # RestDF modules
 from ..configs import config
 from ..utils import helper, exceptions
 
 
-dataframe: pd.DataFrame = None
+dataframe: Optional[pd.DataFrame] = None
 file_name: str = ''
 app: Flask = Flask(__name__)
 
@@ -26,17 +24,17 @@ _total_requests: int = 0
 _values_requests: int = 0
 
 
-def get_flask_app(df: pd.DataFrame, fname: str, api_title: Optional[str] = None) -> Flask:
+def get_flask_app(df: pd.DataFrame, filename: str, api_title: Optional[str] = None) -> Flask:
     global dataframe
     global file_name
+    
     if isinstance(df, pd.DataFrame):
         dataframe = df
-        file_name = fname
+        file_name = filename
     else:
         raise TypeError(f'DataFrame expected, found {type(df)}')
 
     # Setting up SwaggerUI
-
     # Swagger template
     flasgger_template = config.flasgger_template
     flasgger_template['info']['title'] = f'{file_name} API'
@@ -180,9 +178,7 @@ def get_df_sample() -> Response:
     global _total_requests
     _total_requests += 1
 
-    request_body = request.get_json()
-
-    print('request_body:', request_body)
+    request_body = request.get_data()
 
     request_body = request_body if isinstance(request_body, dict) else {}
     df_sample_data = helper.get_dataframe_sample(
@@ -308,7 +304,7 @@ def get_find_string_values(column_name: str) -> Response:
     _total_requests += 1
     _values_requests += 1
 
-    request_body = request.get_json()
+    request_body = request.get_data()
     request_body = request_body if isinstance(request_body, dict) else {}
 
     try:
