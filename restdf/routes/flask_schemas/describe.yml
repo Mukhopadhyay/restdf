@@ -20,3 +20,8 @@ responses:
     schema:
       type: "object"
       example: {"describe": {"Age": {"25%": 18.0, "50%": 23.0, "75%": 38.5, "99%": 63.78, "count": 23.0, "min": 8.0, "max": 64.0}}}
+  500:
+    description: "Error"
+    schema:
+      type: "object"
+      example: {"error": "Column name 'column' does not exist!"}

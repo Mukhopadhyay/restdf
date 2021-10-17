@@ -93,8 +93,26 @@ def test_get_columns(flask_client):
 
 @pytest.mark.routes
 @pytest.mark.flask
-def test_get_describe(flask_client):
-    pass
+@pytest.mark.parametrize('req_body,status_code', [
+    ({}, 200),
+    ({
+        'datetime_is_numeric': True,
+        'include': ["int"],
+        'percentiles': [0.01, 0.25, 0.75, 0.99]
+    }, 200),
+    ({
+        'include': 'all'
+    }, 200),
+    ({
+        'percentiles': 'asd'
+    }, 500),
+    ({
+        'include': 'wrong'
+    }, 500)
+])
+def test_get_describe(flask_client, req_body, status_code):
+    r = flask_client.post('/describe', json=req_body)
+    assert r.status_code == status_code
 
 @pytest.mark.routes
 @pytest.mark.flask

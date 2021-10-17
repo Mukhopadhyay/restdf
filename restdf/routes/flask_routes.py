@@ -1,7 +1,7 @@
 # Built-in modules
 import time
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Tuple
 # Third-party modules
 import flask
 import pandas as pd
@@ -90,7 +90,7 @@ def get_columns() -> Response:
 @cross_origin
 @swag_from('flask_schemas/describe.yml')
 @app.route('/describe', methods=['POST'])
-def get_describe() -> Response:
+def get_describe() -> Tuple[Response, int]:
     global _total_requests
     _total_requests += 1
     request_body = request.get_json()
@@ -100,9 +100,9 @@ def get_describe() -> Response:
             dataframe, **request_body
         )
     except exceptions.InvalidRequestBodyError as inv_req:
-        return jsonify({'error': str(inv_req)})
+        return jsonify({'error': str(inv_req)}), 500
     else:
-        return jsonify({'description': df_description})
+        return jsonify({'description': df_description}), 200
 
 
 @cross_origin
