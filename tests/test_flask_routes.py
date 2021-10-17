@@ -36,6 +36,12 @@ routes = [
     '/find_string/<column_name>'
 ]
 
+# Test dataframe columns
+COLUMNS = ('Age', 'Cabin', 'Embarked', 
+           'Fare', 'Name', 'Parch', 
+           'PassengerId', 'Pclass', 
+           'Sex', 'SibSp', 'Ticket')
+
 def get_routes_from_blueprint(blueprint: Blueprint):
     temp_app = Flask(__name__)
     temp_app.register_blueprint(blueprint)
@@ -108,21 +114,60 @@ def test_get_columns(flask_client):
     }, 500),
     ({
         'include': 'wrong'
-    }, 500)
+    }, 500),
+    ({
+        'wrong': 'option'
+    }, 200)
 ])
-def test_get_describe(flask_client, req_body, status_code):
+def test_get_describe_codes(flask_client, req_body, status_code):
     r = flask_client.post('/describe', json=req_body)
     assert r.status_code == status_code
 
 @pytest.mark.routes
 @pytest.mark.flask
-def test_get_info(flask_client):
-    pass
+def test_get_describe_response(flask_client):
+    # Checking percentiles
+    r = flask_client.post('/describe', json={'percentiles': [0.01, 0.25, 0.75, 0.99]})
+    resp = json.loads(r.data)
+    assert 'description' in resp
+    for key in ['1%', '25%', '50%', '75%', '99%']:
+        assert key in resp['description']['Parch'].keys()
+
+    # Checking includes 'all'
+    r = flask_client.post('/describe', json={'include': 'all'})
+    resp = json.loads(r.data)
+    for col in COLUMNS:
+        assert col in resp['description']
 
 @pytest.mark.routes
 @pytest.mark.flask
 def test_get_dtypes(flask_client):
-    pass
+    # Checking the response
+    r = flask_client.get('/dtypes')
+    resp = json.loads(r.data)
+    assert r.status_code == 200
+    assert 'dtypes' in resp
+    for col in COLUMNS:
+        assert col in resp['dtypes']
+
+    # Checking for wrong method
+    assert flask_client.post('/dtypes').status_code == 405
+
+@pytest.mark.routes
+@pytest.mark.flask
+def test_get_info(flask_client):
+    # Checking the response
+    r = flask_client.get('/info')
+    resp = json.loads(r.data)
+    assert r.status_code == 200
+    assert 'info' in resp
+    assert 'shape' in resp
+    response_cols = [x['column'] for x in resp['info']]
+    for column in COLUMNS:
+        assert column in response_cols
+
+    # Checking for wrong method
+    assert flask_client.post('/info').status_code == 405
 
 @pytest.mark.routes
 @pytest.mark.flask
