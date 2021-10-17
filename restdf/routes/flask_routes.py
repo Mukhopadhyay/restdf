@@ -163,8 +163,9 @@ def get_df_head() -> Response:
 
     request_body = request.get_json()
     request_body = request_body if isinstance(request_body, dict) else {}
+
     df_head_data = helper.get_dataframe_head(
-        dataframe, n=request_body.get('n', 5)
+        dataframe, request_body
     )
     return jsonify({'head': df_head_data})
 

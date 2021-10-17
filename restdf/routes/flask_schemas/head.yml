@@ -17,7 +17,7 @@ parameters:
           type: 'int'
           description: 'Number of rows to return.'
           default: 5
-      example: {'n': 5}
+      example: {'n': 5, 'columns': null, 'index': true}
 responses:
   200:
     description: "Success"
