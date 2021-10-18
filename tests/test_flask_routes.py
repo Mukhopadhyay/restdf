@@ -7,7 +7,7 @@ except ModuleNotFoundError:
 
 # Built-in modules
 import json
-from typing import List
+from typing import List, Dict, Any
 
 # Third-party modules
 import pytest
@@ -37,10 +37,10 @@ routes = [
 ]
 
 # Test dataframe columns
-COLUMNS = ('Age', 'Cabin', 'Embarked', 
+COLUMNS = ['Age', 'Cabin', 'Embarked', 
            'Fare', 'Name', 'Parch', 
            'PassengerId', 'Pclass', 
-           'Sex', 'SibSp', 'Ticket')
+           'Sex', 'SibSp', 'Ticket']
 
 def get_routes_from_blueprint(blueprint: Blueprint):
     temp_app = Flask(__name__)
@@ -171,18 +171,54 @@ def test_get_info(flask_client):
 
 @pytest.mark.routes
 @pytest.mark.flask
-def test_get_value_counts(flask_client):
-    pass
+@pytest.mark.parametrize('column_name,status_code,attrs',[
+    ('Age', 200, ['value_counts', 'column']),
+    ('Pclass', 200, ['value_counts', 'column']),
+    ('_', 500, ['error']),
+    ('WRONG', 500, ['error'])
+])
+def test_get_value_counts(flask_client, column_name: str, status_code: int, attrs):
+    # Checking the response
+    r = flask_client.get(f'/value_counts/{column_name}')
+    resp = json.loads(r.data)
+    assert r.status_code == status_code
+    for attr in attrs:
+        assert attr in resp
+
 
 @pytest.mark.routes
 @pytest.mark.flask
 def test_get_nulls(flask_client):
-    pass
+    # Checking the response
+    r = flask_client.get('/nulls')
+    resp = json.loads(r.data)
+    assert r.status_code == 200
+    assert 'nulls' in resp
+
 
 @pytest.mark.routes
 @pytest.mark.flask
-def test_get_head(flask_client):
-    pass
+@pytest.mark.parametrize('req_body,status_code,root_attr,column_names,size', [
+    ({}, 200, 'head', COLUMNS, 5),
+    ({'index': True}, 200, 'head', COLUMNS+['_index'], 5),
+    ({'columns': ['Name'], 'index':False}, 200, 'head', ['Name'], 5)
+])
+def test_get_head(flask_client,
+                  req_body: Dict[str, Any], 
+                  status_code: int,
+                  root_attr: str,
+                  column_names: List[str],
+                  size: int):
+    # Checking the response
+    r = flask_client.post('/head', json=req_body)
+    assert r.status_code == status_code             # Check status code
+    resp = json.loads(r.data)
+    assert root_attr in resp                        # Check the root attribute
+    response_attrs = list(resp['head'][0].keys())
+    assert len(resp['head']) == size                # Check the size of response
+    for column in column_names:
+        assert column in response_attrs             # Check the response attributes
+
 
 @pytest.mark.routes
 @pytest.mark.flask

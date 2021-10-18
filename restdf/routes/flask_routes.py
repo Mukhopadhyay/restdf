@@ -131,27 +131,27 @@ def get_dtypes() -> Response:
 @cross_origin
 @swag_from('flask_schemas/value_counts.yml')
 @app.route('/value_counts/<column_name>', methods=['GET'])
-def get_value_counts(column_name: str):
+def get_value_counts(column_name: str) -> Tuple[Response, int]:
     global _total_requests
     _total_requests += 1
 
     try:
         vc = helper.get_value_counts(dataframe, column_name)
     except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'}), 500
     else:
-        return jsonify({'column': column_name, 'value_counts': vc})
+        return jsonify({'column': column_name, 'value_counts': vc}), 200
 
 
 @cross_origin
 @swag_from('flask_schemas/nulls.yml')
 @app.route('/nulls', methods=['GET'])
-def get_nulls() -> Response:
+def get_nulls() -> Tuple[Response, int]:
     global _total_requests
     _total_requests += 1
 
     nulls = pd.isna(dataframe).sum().to_dict()
-    return jsonify({"nulls": nulls})
+    return jsonify({"nulls": nulls}), 200
 
 
 @cross_origin
