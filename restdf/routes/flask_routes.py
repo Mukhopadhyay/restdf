@@ -1,21 +1,18 @@
 # Built-in modules
 import time
 from datetime import datetime
-from typing import Optional
-
+from typing import Optional, Tuple
 # Third-party modules
 import flask
 import pandas as pd
 from flask_cors import cross_origin
 from flasgger import Swagger, swag_from
 from flask import Flask, jsonify, request, Response
-
 # RestDF modules
 from ..configs import config
 from ..utils import helper, exceptions
 
-
-dataframe: pd.DataFrame = None
+dataframe: Optional[pd.DataFrame] = None
 file_name: str = ''
 app: Flask = Flask(__name__)
 
@@ -26,17 +23,17 @@ _total_requests: int = 0
 _values_requests: int = 0
 
 
-def get_flask_app(df: pd.DataFrame, fname: str, api_title: Optional[str] = None) -> Flask:
+def get_flask_app(df: pd.DataFrame, filename: str, api_title: Optional[str] = None) -> Flask:
     global dataframe
     global file_name
+
     if isinstance(df, pd.DataFrame):
         dataframe = df
-        file_name = fname
+        file_name = filename
     else:
         raise TypeError(f'DataFrame expected, found {type(df)}')
 
     # Setting up SwaggerUI
-
     # Swagger template
     flasgger_template = config.flasgger_template
     flasgger_template['info']['title'] = f'{file_name} API'
@@ -47,7 +44,6 @@ def get_flask_app(df: pd.DataFrame, fname: str, api_title: Optional[str] = None)
         'title': api_title if api_title else f'{file_name} API',
         'uiversion': 3
     }
-
     Swagger(app, template=flasgger_template, config=flasgger_config)
 
     return app
@@ -94,7 +90,7 @@ def get_columns() -> Response:
 @cross_origin
 @swag_from('flask_schemas/describe.yml')
 @app.route('/describe', methods=['POST'])
-def get_describe() -> Response:
+def get_describe() -> Tuple[Response, int]:
     global _total_requests
     _total_requests += 1
     request_body = request.get_json()
@@ -104,9 +100,9 @@ def get_describe() -> Response:
             dataframe, **request_body
         )
     except exceptions.InvalidRequestBodyError as inv_req:
-        return jsonify({'error': str(inv_req)})
+        return jsonify({'error': str(inv_req)}), 500
     else:
-        return jsonify({'description': df_description})
+        return jsonify({'description': df_description}), 200
 
 
 @cross_origin
@@ -167,8 +163,9 @@ def get_df_head() -> Response:
 
     request_body = request.get_json()
     request_body = request_body if isinstance(request_body, dict) else {}
+
     df_head_data = helper.get_dataframe_head(
-        dataframe, n=request_body.get('n', 5)
+        dataframe, request_body
     )
     return jsonify({'head': df_head_data})
 
@@ -181,8 +178,6 @@ def get_df_sample() -> Response:
     _total_requests += 1
 
     request_body = request.get_json()
-
-    print('request_body:', request_body)
 
     request_body = request_body if isinstance(request_body, dict) else {}
     df_sample_data = helper.get_dataframe_sample(
@@ -268,9 +263,9 @@ def get_equal_values(column_name: str) -> Response:
     request_body = request_body if isinstance(request_body, dict) else {}
 
     try:
-        values = helper.get_equal_values(
-            dataframe, column_name, request_body
-        )
+        values = helper.get_equal_values(dataframe,
+                                         column_name,
+                                         request_body)
     except KeyError:
         return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
     else:
@@ -309,6 +304,7 @@ def get_find_string_values(column_name: str) -> Response:
     _values_requests += 1
 
     request_body = request.get_json()
+
     request_body = request_body if isinstance(request_body, dict) else {}
 
     try:

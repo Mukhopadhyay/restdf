@@ -30,7 +30,7 @@ def main() -> None:
 
     app = flask_routes.get_flask_app(
        df=dataframe,
-       fname=os.path.split(df_path)[-1]
+       filename=os.path.split(df_path)[-1]
     )
 
     # Start the API

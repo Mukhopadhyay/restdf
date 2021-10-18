@@ -12,7 +12,7 @@ parameters:
     description: 'Keyword arguments for the pandas method df.sample()'
     schema:
       type: object
-      example: {'n': 1, 'frac': null, 'replace': false, 'weights': null, 'random_state': 1}
+      example: {'n': 1, 'frac': null, 'replace': false, 'weights': null, 'random_state': 1, 'columns': null, 'index': false}
 responses:
   200:
     description: "Success"
