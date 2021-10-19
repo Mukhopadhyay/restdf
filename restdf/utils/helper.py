@@ -196,7 +196,7 @@ def get_dataframe_sample(df: pd.DataFrame, request_body: Dict[str, Any]) -> List
     response = []
 
     options = {
-        'n': request_body.get('n', 1),
+        'n': request_body.get('n', None if request_body.get('frac') else 1),
         'frac': request_body.get('frac', None),
         'replace': request_body.get('replace', False),
         'weights': request_body.get('weights', None),

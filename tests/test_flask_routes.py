@@ -6,8 +6,10 @@ except ModuleNotFoundError:
     import tests.context
 
 # Built-in modules
+from inspect import CO_ITERABLE_COROUTINE
 import json
 from typing import List, Dict, Any
+import flask
 
 # Third-party modules
 import pytest
@@ -214,27 +216,74 @@ def test_get_head(flask_client,
                   root_attr: str,
                   column_names: List[str],
                   size: int):
-    # Checking the response
+
     r = flask_client.post('/head', json=req_body)
-    assert r.status_code == status_code             # Check status code
+    assert r.status_code == status_code                 # Check status code
     resp = json.loads(r.data)
-    assert root_attr in resp                        # Check the root attribute
+    assert root_attr in resp                            # Check the root attribute
     if root_attr != 'error':
-        response_attrs = list(resp['head'][0].keys())
-        assert len(resp['head']) == size            # Check the size of response
+        response_attrs = list(resp[root_attr][0].keys())
+        assert len(resp[root_attr]) == size             # Check the size of response
         for column in column_names:
-            assert column in response_attrs         # Check the response attributes
+            assert column in response_attrs             # Check the response attributes
 
 
 @pytest.mark.routes
 @pytest.mark.flask
-def test_get_df_sample(flask_client):
-    pass
+@pytest.mark.parametrize('req_body,status_code,root_attr,column_names,size', [
+    ({}, 200, 'sample', COLUMNS, 1),
+    ({'n': 5}, 200, 'sample', COLUMNS, 5),
+    ({'n': 31}, 500, 'error', COLUMNS, -1),
+    ({'n': 31, 'replace': True}, 200, 'sample', COLUMNS, 31),
+    ({'index': True}, 200, 'sample', COLUMNS+['_index'], 1),
+    ({'frac': 0.5, 'n': 5}, 500, 'error', COLUMNS, -1),
+    ({'frac': 0.5}, 200, 'sample', COLUMNS, 15)
+])
+def test_get_df_sample(flask_client,
+                       req_body: Dict[str, Any],
+                       status_code: int,
+                       root_attr: str,
+                       column_names: List[str],
+                       size: int):
+
+    r = flask_client.post('/sample', json=req_body)
+    assert r.status_code == status_code
+    resp = json.loads(r.data)
+    assert root_attr in resp
+    if root_attr != 'error':
+        response_attrs = list(resp[root_attr][0].keys())
+        assert len(resp[root_attr]) == size
+        for column in column_names:
+            assert column in response_attrs
+
 
 @pytest.mark.routes
 @pytest.mark.flask
-def test_get_column_value(flask_client):
-    pass
+@pytest.mark.parametrize('req_body,code,root_attr,column,dtype,size', [
+    ({}, 200, 'values', 'Name', str, 30),
+    ({'n': 5}, 200, 'values', 'Name', str, 5),
+    ({'n': 31}, 200, 'values', 'Pclass', int, 30),
+    ({'n': 'wrong'}, 500, 'error', 'Cabin', str, -1),
+    ({}, 500, 'error', 'WRONG', None, -1),
+    ({'n': 0}, 200, 'values', 'Name', None, 0)
+])
+def test_get_column_value(flask_client,
+                          req_body: Dict[str, Any],
+                          code: int,
+                          root_attr: str,
+                          column: List[str],
+                          dtype: Any,
+                          size: int):
+
+    r = flask_client.post(f'/values/{column}', json=req_body)
+    assert r.status_code == code
+    resp = json.loads(r.data)
+    assert root_attr in resp
+    if root_attr != 'error':
+        assert len(resp[root_attr]) == size
+        if len(resp[root_attr]):
+            assert isinstance(resp[root_attr][0], dtype)
+
 
 @pytest.mark.routes
 @pytest.mark.flask

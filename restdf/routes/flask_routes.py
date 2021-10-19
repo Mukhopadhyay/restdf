@@ -2,6 +2,7 @@
 import time
 from datetime import datetime
 from typing import Optional, Tuple
+from _pytest.mark import KeywordMatcher
 # Third-party modules
 import flask
 import pandas as pd
@@ -169,7 +170,7 @@ def get_df_head() -> Tuple[Response, int]:
     except KeyError as key_error:
         return jsonify({'error': f'KeyError: {str(key_error)}'}), 500
     except Exception as err:
-        return jsonify({'error': str(err)}), 500
+        return jsonify({'error': f'Exception: {str(err)}'}), 500
     else:
         return jsonify({'head': df_head_data}), 200
 
@@ -177,24 +178,31 @@ def get_df_head() -> Tuple[Response, int]:
 @cross_origin
 @swag_from('flask_schemas/sample.yml')
 @app.route('/sample', methods=['POST'])
-def get_df_sample() -> Response:
+def get_df_sample() -> Tuple[Response, int]:
     global _total_requests
     _total_requests += 1
 
     request_body = request.get_json()
 
-    request_body = request_body if isinstance(request_body, dict) else {}
-    df_sample_data = helper.get_dataframe_sample(
-        dataframe, request_body
-    )
-
-    return jsonify({'sample': df_sample_data})
+    try:
+        request_body = request_body if isinstance(request_body, dict) else {}
+        df_sample_data = helper.get_dataframe_sample(
+            dataframe, request_body
+        )
+    except ValueError as value_error:
+        return jsonify({'error': f'ValueError: {str(value_error)}'}), 500
+    except KeyError as key_error:
+        return jsonify({'error': f'KeyError: {str(key_error)}'}), 500
+    except Exception as error:
+        return jsonify({'error': f'Exception: {str(error)}'})
+    else:
+        return jsonify({'sample': df_sample_data}), 200
 
 
 @cross_origin
 @swag_from('flask_schemas/values.yml')
 @app.route('/values/<column_name>', methods=['POST'])
-def get_column_value(column_name: str) -> Response:
+def get_column_value(column_name: str) -> Tuple[Response]:
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -206,10 +214,12 @@ def get_column_value(column_name: str) -> Response:
         values = helper.get_column_value(
             dataframe, column_name, request_body
         )
+    except TypeError as type_error:
+        return jsonify({'error': f'TypeError: {str(type_error)}'}), 500
     except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+        return jsonify({'error': f'KeyError: Column "{column_name}" is not present in the dataframe. Please check /columns'}), 500
     else:
-        return jsonify({'values': values})
+        return jsonify({'values': values}), 200
 
 
 @cross_origin
