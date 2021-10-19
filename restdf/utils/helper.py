@@ -183,7 +183,7 @@ def get_dataframe_head(df: pd.DataFrame, request_body: Dict[str, Any]) -> List[D
 
     return_cols = request_body.get('columns')
     temp_df = temp_df[return_cols] if return_cols else temp_df
-
+    print(temp_df)
     for index, row in temp_df.iterrows():
         d: Dict[str, Any] = row.to_dict()
         if request_body.get('index'):

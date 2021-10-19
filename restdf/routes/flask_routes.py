@@ -157,17 +157,21 @@ def get_nulls() -> Tuple[Response, int]:
 @cross_origin
 @swag_from('flask_schemas/head.yml')
 @app.route('/head', methods=['POST'])
-def get_df_head() -> Response:
+def get_df_head() -> Tuple[Response, int]:
     global _total_requests
     _total_requests += 1
 
     request_body = request.get_json()
     request_body = request_body if isinstance(request_body, dict) else {}
 
-    df_head_data = helper.get_dataframe_head(
-        dataframe, request_body
-    )
-    return jsonify({'head': df_head_data})
+    try:
+        df_head_data = helper.get_dataframe_head(dataframe, request_body)
+    except KeyError as key_error:
+        return jsonify({'error': f'KeyError: {str(key_error)}'}), 500
+    except Exception as err:
+        return jsonify({'error': str(err)}), 500
+    else:
+        return jsonify({'head': df_head_data}), 200
 
 
 @cross_origin

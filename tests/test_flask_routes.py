@@ -51,7 +51,7 @@ def get_routes_from_blueprint(blueprint: Blueprint):
 @pytest.mark.flask
 def test_root(flask_client):
     response = flask_client.get('/')
-    response.status_code == 200
+    assert response.status_code == 200
 
     response_dict = json.loads(response.data)
 
@@ -66,7 +66,7 @@ def test_root(flask_client):
 @pytest.mark.flask
 def test_get_stats(flask_client):
     response = flask_client.get('/stats')
-    response.status_code == 200
+    assert response.status_code == 200
 
     response_dict = json.loads(response.data)
 
@@ -77,7 +77,7 @@ def test_get_stats(flask_client):
 @pytest.mark.flask
 def test_get_columns(flask_client):
     response = flask_client.get('/columns')
-    response.status_code == 200
+    assert response.status_code == 200
 
     response_dict = json.loads(response.data)
 
@@ -201,7 +201,12 @@ def test_get_nulls(flask_client):
 @pytest.mark.parametrize('req_body,status_code,root_attr,column_names,size', [
     ({}, 200, 'head', COLUMNS, 5),
     ({'index': True}, 200, 'head', COLUMNS+['_index'], 5),
-    ({'columns': ['Name'], 'index':False}, 200, 'head', ['Name'], 5)
+    ({'columns': ['Name'], 'index':False}, 200, 'head', ['Name'], 5),
+    ({'n': 10}, 200, 'head', COLUMNS, 10),
+    ({'n': 'all'}, 200, 'head', COLUMNS, 30),
+    ({'n': '123'}, 500, 'error', [], -1),
+    ({'columns': "wrong"}, 500, 'error', [], -1),
+    ({'index': 'TRUE', 'n': 20}, 200, 'head', COLUMNS+['_index'], 20)
 ])
 def test_get_head(flask_client,
                   req_body: Dict[str, Any], 
@@ -214,10 +219,11 @@ def test_get_head(flask_client,
     assert r.status_code == status_code             # Check status code
     resp = json.loads(r.data)
     assert root_attr in resp                        # Check the root attribute
-    response_attrs = list(resp['head'][0].keys())
-    assert len(resp['head']) == size                # Check the size of response
-    for column in column_names:
-        assert column in response_attrs             # Check the response attributes
+    if root_attr != 'error':
+        response_attrs = list(resp['head'][0].keys())
+        assert len(resp['head']) == size            # Check the size of response
+        for column in column_names:
+            assert column in response_attrs         # Check the response attributes
 
 
 @pytest.mark.routes
