@@ -225,12 +225,18 @@ def get_column_value(df: pd.DataFrame, column_name: str, request_body: Dict[str,
 
 def get_isin_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
     values = request_body.get('values', [])
+    if not isinstance(values, list):
+        raise exceptions.InvalidRequestBodyError(f"'values' needs to be a list, got {type(values)}")
 
     temp_df = df[df[column_name].astype(str).isin(values)] if (
-        request_body.get('as_string')
+        request_body.get('as_string', False)
     ) else df[df[column_name].isin(values)]
 
-    return_cols = request_body.get('columns')
+    return_cols = request_body.get('columns', [])
+    return_cols = [] if not return_cols else return_cols
+    if not isinstance(return_cols, list):
+        raise exceptions.InvalidRequestBodyError(f"'columns' needs to be a list, got {type(return_cols)}")
+
     temp_df = temp_df[return_cols] if return_cols else temp_df
 
     response = []

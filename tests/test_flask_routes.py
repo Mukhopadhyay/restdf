@@ -6,14 +6,11 @@ except ModuleNotFoundError:
     import tests.context
 
 # Built-in modules
-from inspect import CO_ITERABLE_COROUTINE
 import json
 from typing import List, Dict, Any
-import flask
 
 # Third-party modules
 import pytest
-import pandas as pd
 from flask import Blueprint, Flask
 
 # RestDF modules
@@ -287,8 +284,42 @@ def test_get_column_value(flask_client,
 
 @pytest.mark.routes
 @pytest.mark.flask
-def test_get_isin_values(flask_client):
-    pass
+@pytest.mark.parametrize('req,code,column,values,root_attr,return_cols', [
+    ({"as_string": False, "columns": None, "index": False, "values": [1, 2]}, 200, 'Pclass', [1, 2], 'values', COLUMNS),
+
+    ({"as_string": False, "columns": None, "index": True, "values": [1, 2]}, 200, 'Pclass', [1, 2], 'values', COLUMNS+['_index']),
+    
+    ({}, 200, 'Pclass', [1, 2], 'values', COLUMNS),
+
+    ({"columns": ["Name", "Pclass"], "values": [1, 2]}, 200, 'Pclass', [1, 2], 'values', ['Name', 'Pclass']),
+    
+    ({"columns": ["Name"], "values": [
+        'Malachard, Mr. Noel',
+        'Geiger, Miss. Amalie'
+    ]}, 200, 'Name', [
+        'Malachard, Mr. Noel',
+        'Geiger, Miss. Amalie'
+    ], 'values', ['Name']),
+
+    ({"columns": "wrong"}, 500, 'Pclass', [], 'error', None),
+    ({'as_string': True, 'values': ['39.0']}, 200, 'Fare', [39.0,], 'values', COLUMNS)
+])  
+def test_get_isin_values(flask_client, req, code, column, values, root_attr, return_cols):
+    r = flask_client.post(f'/isin/{column}', json=req)
+    assert r.status_code == code
+
+    # Checking the root attribute
+    resp = json.loads(r.data)
+    assert root_attr in resp
+
+    if root_attr != 'error' and len(resp[root_attr]):
+        # Checking if the rows returned satisfies 'isin'
+        for val in set([_[column] for _ in resp['values']]):
+            assert val in values
+        # Checking if proper columns are there
+        for col in return_cols:
+            assert col in resp['values'][0]
+
 
 @pytest.mark.routes
 @pytest.mark.flask

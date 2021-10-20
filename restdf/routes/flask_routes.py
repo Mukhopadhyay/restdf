@@ -225,7 +225,7 @@ def get_column_value(column_name: str) -> Tuple[Response]:
 @cross_origin
 @swag_from('flask_schemas/isin.yml')
 @app.route('/isin/<column_name>', methods=['POST'])
-def get_isin_values(column_name: str) -> Response:
+def get_isin_values(column_name: str) -> Tuple[Response, int]:
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -237,10 +237,12 @@ def get_isin_values(column_name: str) -> Response:
         values = helper.get_isin_values(
             dataframe, column_name, request_body
         )
-    except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+    except exceptions.InvalidRequestBodyError as invalid_body:
+        return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
+    except KeyError as key_error:
+        return jsonify({'error': f'KeyError: {str(key_error)}'}), 500
     else:
-        return jsonify({'values': values})
+        return jsonify({'values': values}), 200
 
 
 @cross_origin
