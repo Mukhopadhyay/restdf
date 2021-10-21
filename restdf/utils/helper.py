@@ -1,5 +1,5 @@
 import sys
-from typing import Optional, List, Union, Tuple, Dict, Any
+from typing import Optional, List, Union, Tuple, Dict, Any, Mapping
 
 # Third-party modules
 import psutil
@@ -175,7 +175,7 @@ def get_value_counts(df: pd.DataFrame, column: str) -> Dict[str, int]:
     return dict(df[column].value_counts().to_dict())
 
 
-def get_dataframe_head(df: pd.DataFrame, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
+def get_dataframe_head(df: pd.DataFrame, request_body: Dict[str, Any]) -> List[Mapping[str, Any]]:
     response = []
 
     n: Optional[int] = request_body.get('n', 5)
@@ -185,14 +185,14 @@ def get_dataframe_head(df: pd.DataFrame, request_body: Dict[str, Any]) -> List[D
     temp_df = temp_df[return_cols] if return_cols else temp_df
     print(temp_df)
     for index, row in temp_df.iterrows():
-        d: Dict[str, Any] = row.to_dict()
+        d: Mapping[str, Any] = row.to_dict()
         if request_body.get('index'):
             d.update({'_index': index})
         response.append(d)
     return response
 
 
-def get_dataframe_sample(df: pd.DataFrame, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
+def get_dataframe_sample(df: pd.DataFrame, request_body: Dict[str, Any]) -> List[Mapping[str, Any]]:
     response = []
 
     options = {
@@ -255,10 +255,18 @@ def get_notin_values(df: pd.DataFrame, column_name: str, request_body: Dict[str,
         request_body.get('as_string')
     ) else df[~(df[column_name].isin(values))]
 
+    return_cols = request_body.get('columns', [])
+    return_cols = [] if not return_cols else return_cols
+    if not isinstance(return_cols, list):
+        raise exceptions.InvalidRequestBodyError(f"'columns' needs to be a list, got {type(return_cols)}")
+
+    temp_df = temp_df[return_cols] if return_cols else temp_df
+
     response = []
     for index, row in temp_df.iterrows():
         d = row.to_dict()
-        d.update({'_index': index})
+        if request_body.get('index'):
+            d.update({'_index': index})
         response.append(d)
     return response
 
