@@ -2,7 +2,6 @@
 import time
 from datetime import datetime
 from typing import Optional, Tuple
-from _pytest.mark import KeywordMatcher
 # Third-party modules
 import flask
 import pandas as pd
@@ -13,7 +12,7 @@ from flask import Flask, jsonify, request, Response
 from ..configs import config
 from ..utils import helper, exceptions
 
-dataframe: Optional[pd.DataFrame] = None
+dataframe: pd.DataFrame = pd.DataFrame()
 file_name: str = ''
 app: Flask = Flask(__name__)
 
@@ -194,7 +193,7 @@ def get_df_sample() -> Tuple[Response, int]:
     except KeyError as key_error:
         return jsonify({'error': f'KeyError: {str(key_error)}'}), 500
     except Exception as error:
-        return jsonify({'error': f'Exception: {str(error)}'})
+        return jsonify({'error': f'Exception: {str(error)}'}), 500
     else:
         return jsonify({'sample': df_sample_data}), 200
 
@@ -202,7 +201,7 @@ def get_df_sample() -> Tuple[Response, int]:
 @cross_origin
 @swag_from('flask_schemas/values.yml')
 @app.route('/values/<column_name>', methods=['POST'])
-def get_column_value(column_name: str) -> Tuple[Response]:
+def get_column_value(column_name: str) -> Tuple[Response, int]:
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -286,8 +285,10 @@ def get_equal_values(column_name: str) -> Tuple[Response, int]:
                                          request_body)
     except exceptions.InvalidRequestBodyError as invalid_body:
         return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
-    except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'}), 500
+    except KeyError as key_error:
+        return jsonify({'error': f'{str(key_error)}'}), 500
+    except Exception as err:
+        return jsonify({'error': f'{str(err)}'}), 500
     else:
         return jsonify({'values': values}), 200
 
@@ -295,7 +296,7 @@ def get_equal_values(column_name: str) -> Tuple[Response, int]:
 @cross_origin
 @swag_from('flask_schemas/not_equals.yml')
 @app.route('/not_equals/<column_name>', methods=['POST'])
-def get_not_equal_values(column_name: str) -> Response:
+def get_not_equal_values(column_name: str) -> Tuple[Response, int]:
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -308,16 +309,20 @@ def get_not_equal_values(column_name: str) -> Response:
         values = helper.get_not_equal_values(
             dataframe, column_name, request_body
         )
-    except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+    except exceptions.InvalidRequestBodyError as invalid_body:
+        return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
+    except KeyError as key_error:
+        return jsonify({'error': f'{str(key_error)}'}), 500
+    except Exception as err:
+        return jsonify({'error': f'{str(err)}'}), 500
     else:
-        return jsonify(values)
+        return jsonify({'values': values}), 200
 
 
 @cross_origin
 @swag_from('flask_schemas/find_string.yml')
 @app.route('/find_string/<column_name>', methods=['POST'])
-def get_find_string_values(column_name: str) -> Response:
+def get_find_string_values(column_name: str) -> Tuple[Response, int]:
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -331,11 +336,11 @@ def get_find_string_values(column_name: str) -> Response:
         used_kwargs, values, num_rec_found = helper.get_find_string_values(
             dataframe, column_name, request_body
         )
-    except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+    except exceptions.InvalidRequestBodyError as invalid_body:
+        return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
+    except KeyError as key_error:
+        return jsonify({'error': f'{str(key_error)}'}), 500
+    except Exception as err:
+        return jsonify({'error': f'{type(err).__name__}: {str(err)}'}), 500
     else:
-        return jsonify({
-            'values': values,
-            'option_used': used_kwargs,
-            'num': num_rec_found
-        })
+        return jsonify({'values': values, 'option_used': used_kwargs, 'num': num_rec_found}), 200
