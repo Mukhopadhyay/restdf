@@ -1,10 +1,9 @@
+# Built-ins
 import sys
-from typing import Optional, List, Union, Tuple, Dict, Any
-
+from typing import List, Union, Tuple, Dict, Any, Mapping
 # Third-party modules
 import psutil
 import pandas as pd
-
 # RestDF modules
 from . import exceptions
 
@@ -178,25 +177,25 @@ def get_value_counts(df: pd.DataFrame, column: str) -> Dict[str, int]:
 def get_dataframe_head(df: pd.DataFrame, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
     response = []
 
-    n: Optional[int] = request_body.get('n', 5)
+    n: Union[int, str] = request_body.get('n', 5)
     temp_df = df if n == "all" else df.head(n)
 
     return_cols = request_body.get('columns')
     temp_df = temp_df[return_cols] if return_cols else temp_df
-
+    print(temp_df)
     for index, row in temp_df.iterrows():
-        d: Dict[str, Any] = row.to_dict()
+        d: Dict[str, Any] = dict(row.to_dict())
         if request_body.get('index'):
             d.update({'_index': index})
         response.append(d)
     return response
 
 
-def get_dataframe_sample(df: pd.DataFrame, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
+def get_dataframe_sample(df: pd.DataFrame, request_body: Dict[str, Any]) -> List[Mapping[str, Any]]:
     response = []
 
     options = {
-        'n': request_body.get('n', 1),
+        'n': request_body.get('n', None if request_body.get('frac') else 1),
         'frac': request_body.get('frac', None),
         'replace': request_body.get('replace', False),
         'weights': request_body.get('weights', None),
@@ -225,12 +224,18 @@ def get_column_value(df: pd.DataFrame, column_name: str, request_body: Dict[str,
 
 def get_isin_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
     values = request_body.get('values', [])
+    if not isinstance(values, list):
+        raise exceptions.InvalidRequestBodyError(f"'values' needs to be a list, got {type(values)}")
 
     temp_df = df[df[column_name].astype(str).isin(values)] if (
-        request_body.get('as_string')
+        request_body.get('as_string', False)
     ) else df[df[column_name].isin(values)]
 
-    return_cols = request_body.get('columns')
+    return_cols = request_body.get('columns', [])
+    return_cols = [] if not return_cols else return_cols
+    if not isinstance(return_cols, list):
+        raise exceptions.InvalidRequestBodyError(f"'columns' needs to be a list, got {type(return_cols)}")
+
     temp_df = temp_df[return_cols] if return_cols else temp_df
 
     response = []
@@ -249,25 +254,36 @@ def get_notin_values(df: pd.DataFrame, column_name: str, request_body: Dict[str,
         request_body.get('as_string')
     ) else df[~(df[column_name].isin(values))]
 
+    return_cols = request_body.get('columns', [])
+    return_cols = [] if not return_cols else return_cols
+    if not isinstance(return_cols, list):
+        raise exceptions.InvalidRequestBodyError(f"'columns' needs to be a list, got {type(return_cols)}")
+
+    temp_df = temp_df[return_cols] if return_cols else temp_df
+
     response = []
     for index, row in temp_df.iterrows():
         d = row.to_dict()
-        d.update({'_index': index})
+        if request_body.get('index'):
+            d.update({'_index': index})
         response.append(d)
     return response
 
 
 def get_equal_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
     value = request_body.get('value')
-    return_cols = request_body.get('columns')
 
     temp_df = df[df[column_name].astype(str) == value] if (
         request_body.get('as_string')
     ) else df[df[column_name] == value]
 
-    response = []
+    return_cols = request_body.get('columns', [])
+    if not isinstance(return_cols, list):
+        raise exceptions.InvalidRequestBodyError(f"'columns' needs to be a list, got {type(return_cols)}")
+
     temp_df = temp_df[return_cols] if return_cols else temp_df
 
+    response = []
     for index, row in temp_df.iterrows():
         d = row.to_dict()
         if request_body.get('index'):
@@ -283,7 +299,10 @@ def get_not_equal_values(df: pd.DataFrame, column_name: str, request_body: Dict[
         request_body.get('as_string')
     ) else df[~(df[column_name] == value)]
 
-    return_cols = request_body.get('columns')
+    return_cols = request_body.get('columns', [])
+    if not isinstance(return_cols, list):
+        raise exceptions.InvalidRequestBodyError(f"'columns' needs to be a list, got {type(return_cols)}")
+
     temp_df = temp_df[return_cols] if return_cols else temp_df
 
     response = []
@@ -308,7 +327,10 @@ def get_find_string_values(df: pd.DataFrame,
     }
     temp_df = df[df[column_name].str.contains(**options)]
 
-    return_cols = request_body.get('columns')
+    return_cols = request_body.get('columns', [])
+    if not isinstance(return_cols, list):
+        raise exceptions.InvalidRequestBodyError(f"'columns' needs to be a list, got {type(return_cols)}")
+
     temp_df = temp_df[return_cols] if return_cols else temp_df
 
     response = []

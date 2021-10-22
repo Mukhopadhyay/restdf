@@ -12,7 +12,7 @@ from flask import Flask, jsonify, request, Response
 from ..configs import config
 from ..utils import helper, exceptions
 
-dataframe: Optional[pd.DataFrame] = None
+dataframe: pd.DataFrame = pd.DataFrame()
 file_name: str = ''
 app: Flask = Flask(__name__)
 
@@ -131,66 +131,77 @@ def get_dtypes() -> Response:
 @cross_origin
 @swag_from('flask_schemas/value_counts.yml')
 @app.route('/value_counts/<column_name>', methods=['GET'])
-def get_value_counts(column_name: str):
+def get_value_counts(column_name: str) -> Tuple[Response, int]:
     global _total_requests
     _total_requests += 1
 
     try:
         vc = helper.get_value_counts(dataframe, column_name)
     except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'}), 500
     else:
-        return jsonify({'column': column_name, 'value_counts': vc})
+        return jsonify({'column': column_name, 'value_counts': vc}), 200
 
 
 @cross_origin
 @swag_from('flask_schemas/nulls.yml')
 @app.route('/nulls', methods=['GET'])
-def get_nulls() -> Response:
+def get_nulls() -> Tuple[Response, int]:
     global _total_requests
     _total_requests += 1
 
     nulls = pd.isna(dataframe).sum().to_dict()
-    return jsonify({"nulls": nulls})
+    return jsonify({"nulls": nulls}), 200
 
 
 @cross_origin
 @swag_from('flask_schemas/head.yml')
 @app.route('/head', methods=['POST'])
-def get_df_head() -> Response:
+def get_df_head() -> Tuple[Response, int]:
     global _total_requests
     _total_requests += 1
 
     request_body = request.get_json()
     request_body = request_body if isinstance(request_body, dict) else {}
 
-    df_head_data = helper.get_dataframe_head(
-        dataframe, request_body
-    )
-    return jsonify({'head': df_head_data})
+    try:
+        df_head_data = helper.get_dataframe_head(dataframe, request_body)
+    except KeyError as key_error:
+        return jsonify({'error': f'KeyError: {str(key_error)}'}), 500
+    except Exception as err:
+        return jsonify({'error': f'Exception: {str(err)}'}), 500
+    else:
+        return jsonify({'head': df_head_data}), 200
 
 
 @cross_origin
 @swag_from('flask_schemas/sample.yml')
 @app.route('/sample', methods=['POST'])
-def get_df_sample() -> Response:
+def get_df_sample() -> Tuple[Response, int]:
     global _total_requests
     _total_requests += 1
 
     request_body = request.get_json()
 
-    request_body = request_body if isinstance(request_body, dict) else {}
-    df_sample_data = helper.get_dataframe_sample(
-        dataframe, request_body
-    )
-
-    return jsonify({'sample': df_sample_data})
+    try:
+        request_body = request_body if isinstance(request_body, dict) else {}
+        df_sample_data = helper.get_dataframe_sample(
+            dataframe, request_body
+        )
+    except ValueError as value_error:
+        return jsonify({'error': f'ValueError: {str(value_error)}'}), 500
+    except KeyError as key_error:
+        return jsonify({'error': f'KeyError: {str(key_error)}'}), 500
+    except Exception as error:
+        return jsonify({'error': f'Exception: {str(error)}'}), 500
+    else:
+        return jsonify({'sample': df_sample_data}), 200
 
 
 @cross_origin
 @swag_from('flask_schemas/values.yml')
 @app.route('/values/<column_name>', methods=['POST'])
-def get_column_value(column_name: str) -> Response:
+def get_column_value(column_name: str) -> Tuple[Response, int]:
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -202,16 +213,18 @@ def get_column_value(column_name: str) -> Response:
         values = helper.get_column_value(
             dataframe, column_name, request_body
         )
+    except TypeError as type_error:
+        return jsonify({'error': f'TypeError: {str(type_error)}'}), 500
     except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+        return jsonify({'error': f'KeyError: Column "{column_name}" is not present in the dataframe. Please check /columns'}), 500
     else:
-        return jsonify({'values': values})
+        return jsonify({'values': values}), 200
 
 
 @cross_origin
 @swag_from('flask_schemas/isin.yml')
 @app.route('/isin/<column_name>', methods=['POST'])
-def get_isin_values(column_name: str) -> Response:
+def get_isin_values(column_name: str) -> Tuple[Response, int]:
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -223,16 +236,18 @@ def get_isin_values(column_name: str) -> Response:
         values = helper.get_isin_values(
             dataframe, column_name, request_body
         )
-    except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+    except exceptions.InvalidRequestBodyError as invalid_body:
+        return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
+    except KeyError as key_error:
+        return jsonify({'error': f'KeyError: {str(key_error)}'}), 500
     else:
-        return jsonify({'values': values})
+        return jsonify({'values': values}), 200
 
 
 @cross_origin
 @swag_from('flask_schemas/notin.yml')
 @app.route('/notin/<column_name>', methods=['POST'])
-def get_notin_values(column_name: str) -> Response:
+def get_notin_values(column_name: str) -> Tuple[Response, int]:
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -244,16 +259,18 @@ def get_notin_values(column_name: str) -> Response:
         values = helper.get_notin_values(
             dataframe, column_name, request_body
         )
+    except exceptions.InvalidRequestBodyError as invalid_body:
+        return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
     except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'}), 500
     else:
-        return jsonify(values)
+        return jsonify({'values': values}), 200
 
 
 @cross_origin
 @swag_from('flask_schemas/equals.yml')
 @app.route('/equals/<column_name>', methods=['POST'])
-def get_equal_values(column_name: str) -> Response:
+def get_equal_values(column_name: str) -> Tuple[Response, int]:
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -266,16 +283,20 @@ def get_equal_values(column_name: str) -> Response:
         values = helper.get_equal_values(dataframe,
                                          column_name,
                                          request_body)
-    except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+    except exceptions.InvalidRequestBodyError as invalid_body:
+        return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
+    except KeyError as key_error:
+        return jsonify({'error': f'{str(key_error)}'}), 500
+    except Exception as err:
+        return jsonify({'error': f'{str(err)}'}), 500
     else:
-        return jsonify(values)
+        return jsonify({'values': values}), 200
 
 
 @cross_origin
 @swag_from('flask_schemas/not_equals.yml')
 @app.route('/not_equals/<column_name>', methods=['POST'])
-def get_not_equal_values(column_name: str) -> Response:
+def get_not_equal_values(column_name: str) -> Tuple[Response, int]:
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -288,16 +309,20 @@ def get_not_equal_values(column_name: str) -> Response:
         values = helper.get_not_equal_values(
             dataframe, column_name, request_body
         )
-    except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+    except exceptions.InvalidRequestBodyError as invalid_body:
+        return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
+    except KeyError as key_error:
+        return jsonify({'error': f'{str(key_error)}'}), 500
+    except Exception as err:
+        return jsonify({'error': f'{str(err)}'}), 500
     else:
-        return jsonify(values)
+        return jsonify({'values': values}), 200
 
 
 @cross_origin
 @swag_from('flask_schemas/find_string.yml')
 @app.route('/find_string/<column_name>', methods=['POST'])
-def get_find_string_values(column_name: str) -> Response:
+def get_find_string_values(column_name: str) -> Tuple[Response, int]:
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -311,11 +336,11 @@ def get_find_string_values(column_name: str) -> Response:
         used_kwargs, values, num_rec_found = helper.get_find_string_values(
             dataframe, column_name, request_body
         )
-    except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'})
+    except exceptions.InvalidRequestBodyError as invalid_body:
+        return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
+    except KeyError as key_error:
+        return jsonify({'error': f'{str(key_error)}'}), 500
+    except Exception as err:
+        return jsonify({'error': f'{type(err).__name__}: {str(err)}'}), 500
     else:
-        return jsonify({
-            'values': values,
-            'option_used': used_kwargs,
-            'num': num_rec_found
-        })
+        return jsonify({'values': values, 'option_used': used_kwargs, 'num': num_rec_found}), 200

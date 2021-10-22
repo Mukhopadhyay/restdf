@@ -20,7 +20,7 @@ parameters:
     description: 'Options required for getting the values.'
     schema:
       type: object
-      example: {'values': [3], 'as_string': false}
+      example: {'values': [3], 'as_string': false, 'columns': null}
 responses:
   200:
     description: "Success"
