@@ -17,8 +17,10 @@ ipynb_checkpoints/
 
 # Venv
 venv
+dev_venv
 
 # Test
+.coverage
 .pytest_cache
 */.pytest_cache
 .mypy_cache
