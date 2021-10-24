@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Union
 
 
 @dataclass
@@ -14,9 +14,9 @@ class SwaggerTemplate:
 
 @dataclass
 class InfoTemplate:
-    description: str = "RestDF Description"
+    description: str = "<b>[Created using <code><a href='//github.com/Mukhopadhyay/restdf' target='_blank'>RestDF</a></code>]</b>"
     version: str = "1.0.0"
-    title: str = "RestDF"
+    title: str = "RestDF API"
     termsOfService: str = "https://github.com/Mukhopadhyay/restdf/blob/master/LICENSE"
     contact: Dict[str, str] = field(default_factory=dict)
     license: Dict[str, str] = field(default_factory=dict)
@@ -30,7 +30,7 @@ class Tag:
 
 @dataclass
 class SwaggerEndpoint:
-    parameters: Optional[List[Dict[str, Any]]]
+    parameters: Union[List[Dict[str, Any]], List[Any]]
     tags: List[str] = field(default_factory=list)
     summary: str = "Summary"
     description: str = "Description"

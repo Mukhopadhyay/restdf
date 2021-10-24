@@ -39,5 +39,6 @@ def main() -> None:
 
 
 # Nohup run: nohup python3 -m restdf /absolute/path/to/df > stdlog.txt 2>&1 &
+# More test data: https://github.com/cs109/2014_data/
 if __name__ == '__main__':
     main()

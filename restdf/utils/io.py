@@ -54,7 +54,7 @@ method_dictionary: Dict[str, Callable[..., pd.DataFrame]] = {
 
 def read_dataframe(path: Union[List[str], str]) -> pd.DataFrame:
     path = os.path.join(*path) if isinstance(path, list) else path
-    if not os.path.exists(path):
+    if not path.startswith('https://') and not os.path.exists(path):
         raise exceptions.PathError(
             path,
             f'Path: {path} does not exist!'

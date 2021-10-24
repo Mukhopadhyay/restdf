@@ -121,7 +121,11 @@ equals_request_body = {
             'default': False
         },
         'columns': {
-            'type': 'object',
+            'type': 'array',
+            'items': {
+                'type': 'string',
+                'example': ['columns1', 'column2']
+            },
             'default': None
         },
         'index': {
@@ -143,7 +147,11 @@ find_string_request_body = {
             'default': False
         },
         'columns': {
-            'type': 'object',
+            'type': 'array',
+            'items': {
+                'type': 'string',
+                'example': ['columns1', 'column2']
+            },
             'default': None
         },
         'flags': {
@@ -200,7 +208,8 @@ head_request_body = {
         'columns': {
             'type': 'array',
             'items': {
-                'type': 'string'
+                'type': 'string',
+                'example': ['columns1', 'column2']
             },
             'default': None
         },
@@ -233,7 +242,11 @@ isin_request_body = {
             'default': False
         },
         'columns': {
-            'type': 'object',
+            'type': 'array',
+            'items': {
+                'type': 'string',
+                'example': ['columns1', 'column2']
+            },
             'default': None
         },
         'index': {
@@ -255,7 +268,11 @@ not_equals_request_body = {
             'default': False
         },
         'columns': {
-            'type': 'object',
+            'type': 'array',
+            'items': {
+                'type': 'string',
+                'example': ['columns1', 'column2']
+            },
             'default': None
         },
         'index': {
@@ -277,7 +294,11 @@ notin_request_body = {
             'default': False
         },
         'columns': {
-            'type': 'object',
+            'type': 'array',
+            'items': {
+                'type': 'string',
+                'example': ['columns1', 'column2']
+            },
             'default': None
         },
         'index': {
@@ -295,7 +316,11 @@ sample_request_body = {
     'type': 'object',
     'properties': {
         'columns': {
-            'type': 'object',
+            'type': 'array',
+            'items': {
+                'type': 'string',
+                'example': ['columns1', 'column2']
+            },
             'default': None
         },
         'frac': {
@@ -351,37 +376,37 @@ values_request_body = {
 }
 
 index_path_kwargs = {
-    'summary': '',
-    'description': '',
+    'summary': 'Index route, gives brief intro about the API',
+    'description': "Returns each endpoint's type & description",
     'parameters': [],
     'tags': ['Docs'],
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/IndexResponse'}}}
 }
 stats_path_kwargs = {
-    'summary': '',
-    'description': '',
+    'summary': 'Provides basic Stats about the currently running API',
+    'description': 'Return current sys info, API hit counts etc',
     'parameters': [],
     'tags': ['Docs'],
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/StatsResponse'}}}
 }
 columns_path_kwargs = {
-    'summary': '',
-    'description': '',
+    'summary': 'Get the dataframe columns',
+    'description': 'Performs <code>df.columns</code> & returns the available columns in the dataframe.',
     'parameters': [],
     'tags': ['Metadata'],
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ColumnsResponse'}}}
 }
 describe_path_kwargs = {
-    'summary': '',
-    'description': '',
+    'summary': 'Describes different properties of the dataframe.',
+    'description': 'This endpoint returns the response from <code>df.describe()</code> & returns the result.',
     'parameters': [
         {
-            'name': 'request_body',
+            'name': 'describe() kwargs',
             'in': 'body',
-            'description': 'Request Body',
+            'description': 'Kwargs for <code>pd.describe()</code>',
             'required': True,
             'schema': {
                 '$ref': '#/definitions/DescribeRequest'
@@ -393,24 +418,24 @@ describe_path_kwargs = {
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/DescribeResponse'}}}
 }
 dtypes_path_kwargs = {
-    'summary': '',
-    'description': '',
+    'summary': 'Returns the datatypes of all columns',
+    'description': 'This endpoint returns the response from <code>df.dtypes</code> & returns the result.',
     'parameters': [],
     'tags': ['Metadata'],
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/DtypesResponse'}}}
 }
 info_path_kwargs = {
-    'summary': '',
-    'description': '',
+    'summary': 'Returns some dataframe into (Datatypes, Non-null counts etc)',
+    'description': 'This endpoint returns the response from <code>df.info()</code> & returns the result.',
     'parameters': [],
     'tags': ['Metadata'],
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/InfoResponse'}}}
 }
 nulls_path_kwargs = {
-    'summary': '',
-    'description': '',
+    'summary': 'Returns the count of nulls in the dataframe',
+    'description': 'This endpoint returns the response from <code>pd.isna(df)</code> & returns the result aggregated by sum',
     'parameters': [],
     'tags': ['Metadata'],
     'produces': ['application/json'],
@@ -425,13 +450,13 @@ value_counts_path_kwargs = {
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValueCountsResponse'}}}
 }
 equals_path_kwargs = {
-    'summary': '',
-    'description': '',
+    'summary': 'Returns rows where all column values are exactly equal to the given value',
+    'description': 'For the given column name, this endpoint returns the rows where the values for that column is equal to <code>value</code>.',
     'parameters': [
         {
-            'name': 'request_body',
+            'name': 'Equals options',
             'in': 'body',
-            'description': 'Request Body',
+            'description': 'Options required for getting the values.',
             'required': True,
             'schema': {
                 '$ref': '#/definitions/EqualsRequest'
@@ -443,13 +468,16 @@ equals_path_kwargs = {
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}}}
 }
 find_string_path_kwargs = {
-    'summary': '',
-    'description': '',
+    'summary': 'Returns rows where all string values contains given pattern',
+    'description': "For the given column name, this endpoint returns the rows where the values (string DataTypes) for that column containg the given p\
+                    attern. This uses the <code>str.contains()</code> method, please refer to \
+                    <a href='https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.str.contains.html' \
+                    target='_blank'>this</a> page for more details.",
     'parameters': [
         {
-            'name': 'request_body',
+            'name': 'str.contains kwargs',
             'in': 'body',
-            'description': 'Request Body',
+            'description': 'Keyword arguments for the method <code>str.contains()</code>',
             'required': True,
             'schema': {
                 '$ref': '#/definitions/FindStringRequest'
@@ -461,13 +489,13 @@ find_string_path_kwargs = {
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/FindStringResponse'}}}
 }
 head_path_kwargs = {
-    'summary': '',
-    'description': '',
+    'summary': 'Returns the head of the dataframe.',
+    'description': 'This endpoint returns the response from <code>df.head()</code> & returns the result.',
     'parameters': [
         {
-            'name': 'request_body',
+            'name': '# rows',
             'in': 'body',
-            'description': 'Request Body',
+            'description': 'Number of rows to return from the <code>DataFrame</code>',
             'required': True,
             'schema': {
                 '$ref': '#/definitions/HeadRequest'
@@ -479,13 +507,13 @@ head_path_kwargs = {
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/HeadResponse'}}}
 }
 isin_path_kwargs = {
-    'summary': '',
-    'description': '',
+    'summary': 'Returns rows where all column values are within the array content',
+    'description': 'For the given column name, this endpoint returns the rows where the values are within the <code>values</code> array',
     'parameters': [
         {
-            'name': 'request_body',
+            'name': 'isin options',
             'in': 'body',
-            'description': 'Request Body',
+            'description': 'Options required for getting the values.',
             'required': True,
             'schema': {
                 '$ref': '#/definitions/IsinRequest'
@@ -497,13 +525,13 @@ isin_path_kwargs = {
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}}}
 }
 not_equals_path_kwargs = {
-    'summary': '',
-    'description': '',
+    'summary': 'Returns rows where all column values are not equal to the given value',
+    'description': 'For the given column name, this endpoint returns the rows where the values for that column is not equal to <code>value</code>.',
     'parameters': [
         {
-            'name': 'request_body',
+            'name': 'not equals options',
             'in': 'body',
-            'description': 'Request Body',
+            'description': 'Options required for checking non equality',
             'required': True,
             'schema': {
                 '$ref': '#/definitions/NotEqualsRequest'
@@ -515,13 +543,14 @@ not_equals_path_kwargs = {
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}}}
 }
 notin_path_kwargs = {
-    'summary': '',
-    'description': '',
+    'summary': 'Returns rows where all column values are not within the array content',
+    'description': 'For the given column name, this endpoint returns the rows where the values are not within the <code>values</code> array. Basically,\
+                    the inverse of <code>/isin</code> endpoint.',
     'parameters': [
         {
-            'name': 'request_body',
+            'name': 'not in options',
             'in': 'body',
-            'description': 'Request Body',
+            'description': 'Options required for checking not in values in dataframe',
             'required': True,
             'schema': {
                 '$ref': '#/definitions/NotInRequest'
@@ -533,13 +562,13 @@ notin_path_kwargs = {
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}}}
 }
 sample_path_kwargs = {
-    'summary': '',
-    'description': '',
+    'summary': 'Returns random rows from the dataframe.',
+    'description': 'This endpoint returns the response from <code>df.sample(**kwargs)</code> & returns the result.',
     'parameters': [
         {
-            'name': 'request_body',
+            'name': 'sample kwargs',
             'in': 'body',
-            'description': 'Request Body',
+            'description': 'Keyword arguments for the pandas method df.sample()',
             'required': True,
             'schema': {
                 '$ref': '#/definitions/SampleRequest'

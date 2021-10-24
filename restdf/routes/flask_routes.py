@@ -6,10 +6,11 @@ from typing import Optional, Tuple
 import flask
 import pandas as pd
 from flask_cors import cross_origin
-from flasgger import Swagger, swag_from
+from flasgger import Swagger
 from flask import Flask, jsonify, request, Response
 # RestDF modules
 from ..configs import config
+from .flask_schemas import utils
 from ..utils import helper, exceptions
 
 dataframe: pd.DataFrame = pd.DataFrame()
@@ -44,6 +45,8 @@ def get_flask_app(df: pd.DataFrame, filename: str, api_title: Optional[str] = No
         'title': api_title if api_title else f'{file_name} API',
         'uiversion': 3
     }
+
+    flasgger_template = utils.get_swagger_template(dataframe.columns.tolist())
     Swagger(app, template=flasgger_template, config=flasgger_config)
 
     return app
@@ -55,7 +58,6 @@ def get_flask_app(df: pd.DataFrame, filename: str, api_title: Optional[str] = No
 
 @cross_origin
 @app.route('/', methods=['GET'])
-@swag_from('flask_schemas/index.yml')
 def root() -> Response:
     global _total_requests
     _total_requests += 1
@@ -64,7 +66,6 @@ def root() -> Response:
 
 @cross_origin
 @app.route('/stats', methods=['GET'])
-@swag_from('flask_schemas/stats.yml')
 def get_stats() -> Response:
     global _total_requests
     _total_requests += 1
@@ -79,7 +80,6 @@ def get_stats() -> Response:
 
 
 @cross_origin
-@swag_from('flask_schemas/columns.yml')
 @app.route('/columns', methods=['GET'])
 def get_columns() -> Response:
     global _total_requests
@@ -88,7 +88,6 @@ def get_columns() -> Response:
 
 
 @cross_origin
-@swag_from('flask_schemas/describe.yml')
 @app.route('/describe', methods=['POST'])
 def get_describe() -> Tuple[Response, int]:
     global _total_requests
@@ -106,7 +105,6 @@ def get_describe() -> Tuple[Response, int]:
 
 
 @cross_origin
-@swag_from('flask_schemas/info.yml')
 @app.route('/info', methods=['GET'])
 def get_info() -> Response:
     global _total_requests
@@ -117,7 +115,6 @@ def get_info() -> Response:
 
 
 @cross_origin
-@swag_from('flask_schemas/dtypes.yml')
 @app.route('/dtypes', methods=['GET'])
 def get_dtypes() -> Response:
     global _total_requests
@@ -129,7 +126,6 @@ def get_dtypes() -> Response:
 
 
 @cross_origin
-@swag_from('flask_schemas/value_counts.yml')
 @app.route('/value_counts/<column_name>', methods=['GET'])
 def get_value_counts(column_name: str) -> Tuple[Response, int]:
     global _total_requests
@@ -144,7 +140,6 @@ def get_value_counts(column_name: str) -> Tuple[Response, int]:
 
 
 @cross_origin
-@swag_from('flask_schemas/nulls.yml')
 @app.route('/nulls', methods=['GET'])
 def get_nulls() -> Tuple[Response, int]:
     global _total_requests
@@ -155,7 +150,6 @@ def get_nulls() -> Tuple[Response, int]:
 
 
 @cross_origin
-@swag_from('flask_schemas/head.yml')
 @app.route('/head', methods=['POST'])
 def get_df_head() -> Tuple[Response, int]:
     global _total_requests
@@ -175,7 +169,6 @@ def get_df_head() -> Tuple[Response, int]:
 
 
 @cross_origin
-@swag_from('flask_schemas/sample.yml')
 @app.route('/sample', methods=['POST'])
 def get_df_sample() -> Tuple[Response, int]:
     global _total_requests
@@ -199,7 +192,6 @@ def get_df_sample() -> Tuple[Response, int]:
 
 
 @cross_origin
-@swag_from('flask_schemas/values.yml')
 @app.route('/values/<column_name>', methods=['POST'])
 def get_column_value(column_name: str) -> Tuple[Response, int]:
     global _total_requests
@@ -222,7 +214,6 @@ def get_column_value(column_name: str) -> Tuple[Response, int]:
 
 
 @cross_origin
-@swag_from('flask_schemas/isin.yml')
 @app.route('/isin/<column_name>', methods=['POST'])
 def get_isin_values(column_name: str) -> Tuple[Response, int]:
     global _total_requests
@@ -245,7 +236,6 @@ def get_isin_values(column_name: str) -> Tuple[Response, int]:
 
 
 @cross_origin
-@swag_from('flask_schemas/notin.yml')
 @app.route('/notin/<column_name>', methods=['POST'])
 def get_notin_values(column_name: str) -> Tuple[Response, int]:
     global _total_requests
@@ -268,7 +258,6 @@ def get_notin_values(column_name: str) -> Tuple[Response, int]:
 
 
 @cross_origin
-@swag_from('flask_schemas/equals.yml')
 @app.route('/equals/<column_name>', methods=['POST'])
 def get_equal_values(column_name: str) -> Tuple[Response, int]:
     global _total_requests
@@ -294,7 +283,6 @@ def get_equal_values(column_name: str) -> Tuple[Response, int]:
 
 
 @cross_origin
-@swag_from('flask_schemas/not_equals.yml')
 @app.route('/not_equals/<column_name>', methods=['POST'])
 def get_not_equal_values(column_name: str) -> Tuple[Response, int]:
     global _total_requests
@@ -320,7 +308,6 @@ def get_not_equal_values(column_name: str) -> Tuple[Response, int]:
 
 
 @cross_origin
-@swag_from('flask_schemas/find_string.yml')
 @app.route('/find_string/<column_name>', methods=['POST'])
 def get_find_string_values(column_name: str) -> Tuple[Response, int]:
     global _total_requests
