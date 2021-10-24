@@ -70,32 +70,32 @@ def get_index(filename: str) -> Dict[str, Any]:
             {
                 'name': '/values/<column_name>',
                 'type': ['POST'],
-                'decription': ''
+                'description': ''
             },
             {
                 'name': '/isin/<column_name>',
                 'type': ['POST'],
-                'decription': ''
+                'description': ''
             },
             {
                 'name': '/notin/<column_name>',
                 'type': ['POST'],
-                'decription': ''
+                'description': ''
             },
             {
                 'name': '/equals/<column_name>',
                 'type': ['POST'],
-                'decription': ''
+                'description': ''
             },
             {
                 'name': '/not_equals/<column_name>',
                 'type': ['POST'],
-                'decription': ''
+                'description': ''
             },
             {
                 'name': '/find_string/<column_name>',
                 'type': ['POST'],
-                'decription': ''
+                'description': ''
             }
         ]
     }
