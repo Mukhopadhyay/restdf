@@ -24,7 +24,7 @@ _total_requests: int = 0
 _values_requests: int = 0
 
 
-def get_flask_app(df: pd.DataFrame, filename: str, api_title: Optional[str] = None) -> Flask:
+def get_flask_app(df: pd.DataFrame, filename: str, api_title: Optional[str] = None, user_email: Optional[str] = None) -> Flask:
     global dataframe
     global file_name
 
@@ -47,6 +47,13 @@ def get_flask_app(df: pd.DataFrame, filename: str, api_title: Optional[str] = No
     }
 
     flasgger_template = utils.get_swagger_template(dataframe.columns.tolist())
+
+    # User-defined configs of the Swagger UI
+
+    flasgger_template['info']['title'] = api_title if api_title else f'{file_name} API'
+    if user_email:
+        flasgger_template['info']['contact']['email'] = user_email
+
     Swagger(app, template=flasgger_template, config=flasgger_config)
 
     return app
@@ -99,7 +106,9 @@ def get_describe() -> Tuple[Response, int]:
             dataframe, **request_body
         )
     except exceptions.InvalidRequestBodyError as inv_req:
-        return jsonify({'error': str(inv_req)}), 500
+        return jsonify({'error': helper.get_error_response(inv_req)}), 500
+    except Exception as err:
+        return jsonify({'error': helper.get_error_response(err)}), 500
     else:
         return jsonify({'description': df_description}), 200
 
@@ -110,8 +119,12 @@ def get_info() -> Response:
     global _total_requests
     _total_requests += 1
 
-    info = helper.get_dataframe_info(dataframe)
-    return jsonify({'info': info, 'shape': dataframe.shape})
+    try:
+        info = helper.get_dataframe_info(dataframe)
+    except Exception as err:
+        return jsonify({'error': helper.get_error_response(err)}), 500
+    else:
+        return jsonify({'info': info, 'shape': dataframe.shape})
 
 
 @cross_origin
@@ -133,8 +146,11 @@ def get_value_counts(column_name: str) -> Tuple[Response, int]:
 
     try:
         vc = helper.get_value_counts(dataframe, column_name)
-    except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'}), 500
+    except KeyError as key_err:
+        return jsonify({'error': helper.get_error_response(key_err)}), 500
+        # return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'}), 500
+    except Exception as err:
+        return jsonify({'error': helper.get_error_response(err)}), 500
     else:
         return jsonify({'column': column_name, 'value_counts': vc}), 200
 
@@ -161,9 +177,11 @@ def get_df_head() -> Tuple[Response, int]:
     try:
         df_head_data = helper.get_dataframe_head(dataframe, request_body)
     except KeyError as key_error:
-        return jsonify({'error': f'KeyError: {str(key_error)}'}), 500
+        return jsonify({'error': helper.get_error_response(key_error)}), 500
+        # return jsonify({'error': f'KeyError: {str(key_error)}'}), 500
     except Exception as err:
-        return jsonify({'error': f'Exception: {str(err)}'}), 500
+        return jsonify({'error': helper.get_error_response(err)}), 500
+        # return jsonify({'error': f'Exception: {str(err)}'}), 500
     else:
         return jsonify({'head': df_head_data}), 200
 
@@ -182,11 +200,14 @@ def get_df_sample() -> Tuple[Response, int]:
             dataframe, request_body
         )
     except ValueError as value_error:
-        return jsonify({'error': f'ValueError: {str(value_error)}'}), 500
+        return jsonify({'error': helper.get_error_response(value_error)}), 500
+        # return jsonify({'error': f'ValueError: {str(value_error)}'}), 500
     except KeyError as key_error:
-        return jsonify({'error': f'KeyError: {str(key_error)}'}), 500
-    except Exception as error:
-        return jsonify({'error': f'Exception: {str(error)}'}), 500
+        return jsonify({'error': helper.get_error_response(key_error)}), 500
+        # return jsonify({'error': f'KeyError: {str(key_error)}'}), 500
+    except Exception as err:
+        return jsonify({'error': helper.get_error_response(err)}), 500
+        # return jsonify({'error': f'Exception: {str(error)}'}), 500
     else:
         return jsonify({'sample': df_sample_data}), 200
 
@@ -206,9 +227,13 @@ def get_column_value(column_name: str) -> Tuple[Response, int]:
             dataframe, column_name, request_body
         )
     except TypeError as type_error:
-        return jsonify({'error': f'TypeError: {str(type_error)}'}), 500
-    except KeyError:
-        return jsonify({'error': f'KeyError: Column "{column_name}" is not present in the dataframe. Please check /columns'}), 500
+        return jsonify({'error': helper.get_error_response(type_error)}), 500
+        # return jsonify({'error': f'TypeError: {str(type_error)}'}), 500
+    except KeyError as key_err:
+        return jsonify({'error': helper.get_error_response(key_err)}), 500
+        # return jsonify({'error': f'KeyError: Column "{column_name}" is not present in the dataframe. Please check /columns'}), 500
+    except Exception as err:
+        return jsonify({'error': helper.get_error_response(err)}), 500
     else:
         return jsonify({'values': values}), 200
 
@@ -228,9 +253,11 @@ def get_isin_values(column_name: str) -> Tuple[Response, int]:
             dataframe, column_name, request_body
         )
     except exceptions.InvalidRequestBodyError as invalid_body:
-        return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
-    except KeyError as key_error:
-        return jsonify({'error': f'KeyError: {str(key_error)}'}), 500
+        return jsonify({'error': helper.get_error_response(invalid_body)}), 500
+    except KeyError as key_err:
+        return jsonify({'error': helper.get_error_response(key_err)}), 500
+    except Exception as err:
+        return jsonify({'error': helper.get_error_response(err)}), 500
     else:
         return jsonify({'values': values}), 200
 
@@ -250,9 +277,13 @@ def get_notin_values(column_name: str) -> Tuple[Response, int]:
             dataframe, column_name, request_body
         )
     except exceptions.InvalidRequestBodyError as invalid_body:
-        return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
-    except KeyError:
-        return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'}), 500
+        return jsonify({'error': helper.get_error_response(invalid_body)}), 500
+        # return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
+    except KeyError as key_err:
+        return jsonify({'error': helper.get_error_response(key_err)}), 500
+        # return jsonify({'error': f'Column "{column_name}" is not present in the dataframe. Please check /columns'}), 500
+    except Exception as err:
+        return jsonify({'error': helper.get_error_response(err)}), 500
     else:
         return jsonify({'values': values}), 200
 
@@ -273,11 +304,14 @@ def get_equal_values(column_name: str) -> Tuple[Response, int]:
                                          column_name,
                                          request_body)
     except exceptions.InvalidRequestBodyError as invalid_body:
-        return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
-    except KeyError as key_error:
-        return jsonify({'error': f'{str(key_error)}'}), 500
+        return jsonify({'error': helper.get_error_response(invalid_body)}), 500
+        # return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
+    except KeyError as key_err:
+        return jsonify({'error': helper.get_error_response(key_err)}), 500
+        # return jsonify({'error': f'{str(key_error)}'}), 500
     except Exception as err:
-        return jsonify({'error': f'{str(err)}'}), 500
+        return jsonify({'error': helper.get_error_response(err)}), 500
+        # return jsonify({'error': f'{str(err)}'}), 500
     else:
         return jsonify({'values': values}), 200
 
@@ -298,11 +332,14 @@ def get_not_equal_values(column_name: str) -> Tuple[Response, int]:
             dataframe, column_name, request_body
         )
     except exceptions.InvalidRequestBodyError as invalid_body:
-        return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
-    except KeyError as key_error:
-        return jsonify({'error': f'{str(key_error)}'}), 500
+        return jsonify({'error': helper.get_error_response(invalid_body)}), 500
+        # return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
+    except KeyError as key_err:
+        return jsonify({'error': helper.get_error_response(key_err)}), 500
+        # return jsonify({'error': f'{str(key_error)}'}), 500
     except Exception as err:
-        return jsonify({'error': f'{str(err)}'}), 500
+        return jsonify({'error': helper.get_error_response(err)}), 500
+        # return jsonify({'error': f'{str(err)}'}), 500
     else:
         return jsonify({'values': values}), 200
 
@@ -324,10 +361,13 @@ def get_find_string_values(column_name: str) -> Tuple[Response, int]:
             dataframe, column_name, request_body
         )
     except exceptions.InvalidRequestBodyError as invalid_body:
-        return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
-    except KeyError as key_error:
-        return jsonify({'error': f'{str(key_error)}'}), 500
+        return jsonify({'error': helper.get_error_response(invalid_body)}), 500
+        # return jsonify({'error': f'InvalidRequestBodyError: {str(invalid_body)}'}), 500
+    except KeyError as key_err:
+        return jsonify({'error': helper.get_error_response(key_err)}), 500
+        # return jsonify({'error': f'{str(key_error)}'}), 500
     except Exception as err:
-        return jsonify({'error': f'{type(err).__name__}: {str(err)}'}), 500
+        return jsonify({'error': helper.get_error_response(err)}), 500
+        # return jsonify({'error': f'{type(err).__name__}: {str(err)}'}), 500
     else:
         return jsonify({'values': values, 'option_used': used_kwargs, 'num': num_rec_found}), 200

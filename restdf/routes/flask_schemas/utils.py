@@ -16,7 +16,7 @@ endpoints = [
     ('/isin/{column_name}', 'post', metadata.isin_path_kwargs),
     ('/not_equals/{column_name}', 'post', metadata.not_equals_path_kwargs),
     ('/notin/{column_name}', 'post', metadata.notin_path_kwargs),
-    ('/sample/{column_name}', 'post', metadata.sample_path_kwargs),
+    ('/sample', 'post', metadata.sample_path_kwargs),
     ('/values/{column_name}', 'post', metadata.values_path_kwargs)
 ]
 

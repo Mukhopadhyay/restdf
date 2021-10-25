@@ -1,3 +1,5 @@
+from typing import Dict, Any
+
 # Response for / endpoint
 index_response = {
     'type': 'object',
@@ -319,14 +321,15 @@ sample_request_body = {
             'type': 'array',
             'items': {
                 'type': 'string',
-                'example': ['columns1', 'column2']
+                'example': 'column1'
             },
             'default': None
         },
         'frac': {
             'type': 'number',
             'format': 'float',
-            'default': None
+            'default': None,
+            'example': None
         },
         'index': {
             'type': 'boolean',
@@ -334,7 +337,8 @@ sample_request_body = {
         },
         'n': {
             'type': 'integer',
-            'default': 1
+            'default': 1,
+            'example': 1
         },
         'random_state': {
             'type': 'integer',
@@ -346,7 +350,8 @@ sample_request_body = {
         },
         'weights': {
             'type': 'object',
-            'default': None
+            'default': None,
+            'example': None
         }
     }
 }
@@ -375,7 +380,7 @@ values_request_body = {
     }
 }
 
-index_path_kwargs = {
+index_path_kwargs: Dict[str, Any] = {
     'summary': 'Index route, gives brief intro about the API',
     'description': "Returns each endpoint's type & description",
     'parameters': [],
@@ -383,7 +388,7 @@ index_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/IndexResponse'}}}
 }
-stats_path_kwargs = {
+stats_path_kwargs: Dict[str, Any] = {
     'summary': 'Provides basic Stats about the currently running API',
     'description': 'Return current sys info, API hit counts etc',
     'parameters': [],
@@ -391,7 +396,7 @@ stats_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/StatsResponse'}}}
 }
-columns_path_kwargs = {
+columns_path_kwargs: Dict[str, Any] = {
     'summary': 'Get the dataframe columns',
     'description': 'Performs <code>df.columns</code> & returns the available columns in the dataframe.',
     'parameters': [],
@@ -399,7 +404,7 @@ columns_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ColumnsResponse'}}}
 }
-describe_path_kwargs = {
+describe_path_kwargs: Dict[str, Any] = {
     'summary': 'Describes different properties of the dataframe.',
     'description': 'This endpoint returns the response from <code>df.describe()</code> & returns the result.',
     'parameters': [
@@ -417,7 +422,7 @@ describe_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/DescribeResponse'}}}
 }
-dtypes_path_kwargs = {
+dtypes_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns the datatypes of all columns',
     'description': 'This endpoint returns the response from <code>df.dtypes</code> & returns the result.',
     'parameters': [],
@@ -425,7 +430,7 @@ dtypes_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/DtypesResponse'}}}
 }
-info_path_kwargs = {
+info_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns some dataframe into (Datatypes, Non-null counts etc)',
     'description': 'This endpoint returns the response from <code>df.info()</code> & returns the result.',
     'parameters': [],
@@ -433,7 +438,7 @@ info_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/InfoResponse'}}}
 }
-nulls_path_kwargs = {
+nulls_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns the count of nulls in the dataframe',
     'description': 'This endpoint returns the response from <code>pd.isna(df)</code> & returns the result aggregated by sum',
     'parameters': [],
@@ -441,7 +446,7 @@ nulls_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/NullsResponse'}}}
 }
-value_counts_path_kwargs = {
+value_counts_path_kwargs: Dict[str, Any] = {
     'summary': '',
     'description': '',
     'parameters': [],
@@ -449,7 +454,7 @@ value_counts_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValueCountsResponse'}}}
 }
-equals_path_kwargs = {
+equals_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns rows where all column values are exactly equal to the given value',
     'description': 'For the given column name, this endpoint returns the rows where the values for that column is equal to <code>value</code>.',
     'parameters': [
@@ -467,7 +472,7 @@ equals_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}}}
 }
-find_string_path_kwargs = {
+find_string_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns rows where all string values contains given pattern',
     'description': "For the given column name, this endpoint returns the rows where the values (string DataTypes) for that column containg the given p\
                     attern. This uses the <code>str.contains()</code> method, please refer to \
@@ -488,7 +493,7 @@ find_string_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/FindStringResponse'}}}
 }
-head_path_kwargs = {
+head_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns the head of the dataframe.',
     'description': 'This endpoint returns the response from <code>df.head()</code> & returns the result.',
     'parameters': [
@@ -506,7 +511,7 @@ head_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/HeadResponse'}}}
 }
-isin_path_kwargs = {
+isin_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns rows where all column values are within the array content',
     'description': 'For the given column name, this endpoint returns the rows where the values are within the <code>values</code> array',
     'parameters': [
@@ -524,7 +529,7 @@ isin_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}}}
 }
-not_equals_path_kwargs = {
+not_equals_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns rows where all column values are not equal to the given value',
     'description': 'For the given column name, this endpoint returns the rows where the values for that column is not equal to <code>value</code>.',
     'parameters': [
@@ -542,7 +547,7 @@ not_equals_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}}}
 }
-notin_path_kwargs = {
+notin_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns rows where all column values are not within the array content',
     'description': 'For the given column name, this endpoint returns the rows where the values are not within the <code>values</code> array. Basically,\
                     the inverse of <code>/isin</code> endpoint.',
@@ -561,7 +566,7 @@ notin_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}}}
 }
-sample_path_kwargs = {
+sample_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns random rows from the dataframe.',
     'description': 'This endpoint returns the response from <code>df.sample(**kwargs)</code> & returns the result.',
     'parameters': [
@@ -579,7 +584,7 @@ sample_path_kwargs = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/SampleResponse'}}}
 }
-values_path_kwargs = {
+values_path_kwargs: Dict[str, Any] = {
     'summary': '',
     'description': '',
     'parameters': [

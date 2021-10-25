@@ -6,97 +6,16 @@ import psutil
 import pandas as pd
 # RestDF modules
 from . import exceptions
+from ..routes.flask_routes import utils
 
 
 def get_index(filename: str) -> Dict[str, Any]:
     INDEX_RESPONSE = {
         'filename': filename,
         'endpoints': [
-            {
-                'name': '/',
-                'type': ['GET'],
-                'description': ''
-            },
-            {
-                'name': '/stats',
-                'type': ['GET'],
-                'description': ''
-            },
-            {
-                'name': '/columns',
-                'type': ['GET'],
-                'description': ''
-            },
-            {
-                'name': '/describe',
-                'type': ['POST'],
-                'description': ''
-            },
-            {
-                'name': '/info',
-                'type': ['GET'],
-                'description': ''
-            },
-            {
-                'name': '/dtypes',
-                'type': ['GET'],
-                'description': ''
-            },
-            {
-                'name': '/value_counts/<column_name>',
-                'type': ['GET'],
-                'description': ''
-            },
-            {
-                'name': '/nulls',
-                'type': ['GET'],
-                'description': ''
-            },
-            {
-                'name': '/head',
-                'type': ['POST'],
-                'description': ''
-            },
-            {
-                'name': '/sample',
-                'type': ['POST'],
-                'description': ''
-            },
-            {
-                'name': '/values/<column_name>',
-                'type': ['POST'],
-                'description': ''
-            },
-            {
-                'name': '/values/<column_name>',
-                'type': ['POST'],
-                'description': ''
-            },
-            {
-                'name': '/isin/<column_name>',
-                'type': ['POST'],
-                'description': ''
-            },
-            {
-                'name': '/notin/<column_name>',
-                'type': ['POST'],
-                'description': ''
-            },
-            {
-                'name': '/equals/<column_name>',
-                'type': ['POST'],
-                'description': ''
-            },
-            {
-                'name': '/not_equals/<column_name>',
-                'type': ['POST'],
-                'description': ''
-            },
-            {
-                'name': '/find_string/<column_name>',
-                'type': ['POST'],
-                'description': ''
-            }
+            {'name': ep,
+             'method': method,
+             'summary': data['summary']} for (ep, method, data) in utils.endpoints
         ]
     }
     return INDEX_RESPONSE
@@ -341,3 +260,7 @@ def get_find_string_values(df: pd.DataFrame,
         response.append(d)
 
     return options, response, temp_df.shape[0]
+
+
+def get_error_response(exception: object) -> Dict[str, str]:
+    return {'err': repr(exception), 'type': type(exception).__name__, 'module': type(exception).__module__}
