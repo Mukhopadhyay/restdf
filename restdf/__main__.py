@@ -18,7 +18,6 @@ def main() -> None:
     args = utils.get_parser().parse_args()
 
     df_path = args.path
-    # log_path = args.path          # TBI
     flask_kwargs = {
         'host':  settings.HOST if not args.host else args.host,
         'port':  settings.PORT if not args.port else args.port,
@@ -30,7 +29,9 @@ def main() -> None:
 
     app = flask_routes.get_flask_app(
        df=dataframe,
-       filename=os.path.split(df_path)[-1]
+       filename=os.path.split(df_path)[-1],
+       api_title=args.title,
+       user_email=args.email
     )
 
     # Start the API

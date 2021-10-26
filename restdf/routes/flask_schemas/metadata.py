@@ -1,5 +1,39 @@
 from typing import Dict, Any
 
+COLUMNS_SCHEMA = {
+    'type': 'array',
+    'items': {
+        'type': 'string',
+        'example': 'column1'
+    },
+    'default': None,
+    'example': None
+}
+
+# Error Response
+error_response = {
+    'type': 'object',
+    'properties': {
+        'error': {
+            'type': 'object',
+            'properties': {
+                'err': {
+                    'type': 'string',
+                    'example': "'columns' needs to be a list, got str"
+                },
+                'type': {
+                    'type': 'string',
+                    'example': 'InvalidRequestBodyError'
+                },
+                'module': {
+                    'type': 'string',
+                    'example': 'restdf.utils.exceptions'
+                }
+            }
+        }
+    }
+}
+
 # Response for / endpoint
 index_response = {
     'type': 'object',
@@ -122,14 +156,7 @@ equals_request_body = {
             'type': 'boolean',
             'default': False
         },
-        'columns': {
-            'type': 'array',
-            'items': {
-                'type': 'string',
-                'example': ['columns1', 'column2']
-            },
-            'default': None
-        },
+        'columns': COLUMNS_SCHEMA,
         'index': {
             'type': 'boolean',
             'default': True
@@ -148,14 +175,7 @@ find_string_request_body = {
             'type': 'boolean',
             'default': False
         },
-        'columns': {
-            'type': 'array',
-            'items': {
-                'type': 'string',
-                'example': ['columns1', 'column2']
-            },
-            'default': None
-        },
+        'columns': COLUMNS_SCHEMA,
         'flags': {
             'type': 'integer',
             'default': 0
@@ -207,14 +227,7 @@ find_string_response_body = {
 head_request_body = {
     'type': 'object',
     'properties': {
-        'columns': {
-            'type': 'array',
-            'items': {
-                'type': 'string',
-                'example': ['columns1', 'column2']
-            },
-            'default': None
-        },
+        'columns': COLUMNS_SCHEMA,
         'index': {
             'type': 'boolean',
             'default': True
@@ -243,14 +256,7 @@ isin_request_body = {
             'type': 'boolean',
             'default': False
         },
-        'columns': {
-            'type': 'array',
-            'items': {
-                'type': 'string',
-                'example': ['columns1', 'column2']
-            },
-            'default': None
-        },
+        'columns': COLUMNS_SCHEMA,
         'index': {
             'type': 'boolean',
             'default': True
@@ -269,14 +275,7 @@ not_equals_request_body = {
             'type': 'boolean',
             'default': False
         },
-        'columns': {
-            'type': 'array',
-            'items': {
-                'type': 'string',
-                'example': ['columns1', 'column2']
-            },
-            'default': None
-        },
+        'columns': COLUMNS_SCHEMA,
         'index': {
             'type': 'boolean',
             'default': True
@@ -295,14 +294,7 @@ notin_request_body = {
             'type': 'boolean',
             'default': False
         },
-        'columns': {
-            'type': 'array',
-            'items': {
-                'type': 'string',
-                'example': ['columns1', 'column2']
-            },
-            'default': None
-        },
+        'columns': COLUMNS_SCHEMA,
         'index': {
             'type': 'boolean',
             'default': True
@@ -313,18 +305,12 @@ notin_request_body = {
         }
     }
 }
+
 # Request Body for /sample endpoint
 sample_request_body = {
     'type': 'object',
     'properties': {
-        'columns': {
-            'type': 'array',
-            'items': {
-                'type': 'string',
-                'example': 'column1'
-            },
-            'default': None
-        },
+        'columns': COLUMNS_SCHEMA,
         'frac': {
             'type': 'number',
             'format': 'float',
@@ -420,7 +406,10 @@ describe_path_kwargs: Dict[str, Any] = {
     ],
     'tags': ['Metadata'],
     'produces': ['application/json'],
-    'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/DescribeResponse'}}}
+    'responses': {
+        '200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/DescribeResponse'}},
+        '500': {'description': 'Error response', 'schema': {'$ref': '#/definitions/ErrorResponse'}}
+    }
 }
 dtypes_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns the datatypes of all columns',
@@ -430,13 +419,17 @@ dtypes_path_kwargs: Dict[str, Any] = {
     'produces': ['application/json'],
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/DtypesResponse'}}}
 }
+
 info_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns some dataframe into (Datatypes, Non-null counts etc)',
     'description': 'This endpoint returns the response from <code>df.info()</code> & returns the result.',
     'parameters': [],
     'tags': ['Metadata'],
     'produces': ['application/json'],
-    'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/InfoResponse'}}}
+    'responses': {
+        '200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/InfoResponse'}},
+        '500': {'description': 'Error response', 'schema': {'$ref': '#/definitions/ErrorResponse'}}
+    }
 }
 nulls_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns the count of nulls in the dataframe',
@@ -452,7 +445,10 @@ value_counts_path_kwargs: Dict[str, Any] = {
     'parameters': [],
     'tags': ['Metadata'],
     'produces': ['application/json'],
-    'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValueCountsResponse'}}}
+    'responses': {
+        '200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValueCountsResponse'}},
+        '500': {'description': 'Error response', 'schema': {'$ref': '#/definitions/ErrorResponse'}}
+    }
 }
 equals_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns rows where all column values are exactly equal to the given value',
@@ -470,7 +466,10 @@ equals_path_kwargs: Dict[str, Any] = {
     ],
     'tags': ['Data'],
     'produces': ['application/json'],
-    'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}}}
+    'responses': {
+        '200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}},
+        '500': {'description': 'Error response', 'schema': {'$ref': '#/definitions/ErrorResponse'}}
+    }
 }
 find_string_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns rows where all string values contains given pattern',
@@ -491,7 +490,10 @@ find_string_path_kwargs: Dict[str, Any] = {
     ],
     'tags': ['Data'],
     'produces': ['application/json'],
-    'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/FindStringResponse'}}}
+    'responses': {
+        '200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/FindStringResponse'}},
+        '500': {'description': 'Error response', 'schema': {'$ref': '#/definitions/ErrorResponse'}}
+    }
 }
 head_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns the head of the dataframe.',
@@ -509,7 +511,10 @@ head_path_kwargs: Dict[str, Any] = {
     ],
     'tags': ['Data'],
     'produces': ['application/json'],
-    'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/HeadResponse'}}}
+    'responses': {
+        '200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/HeadResponse'}},
+        '500': {'description': 'Error response', 'schema': {'$ref': '#/definitions/ErrorResponse'}}
+    }
 }
 isin_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns rows where all column values are within the array content',
@@ -527,7 +532,10 @@ isin_path_kwargs: Dict[str, Any] = {
     ],
     'tags': ['Data'],
     'produces': ['application/json'],
-    'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}}}
+    'responses': {
+        '200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}},
+        '500': {'description': 'Error response', 'schema': {'$ref': '#/definitions/ErrorResponse'}}
+    }
 }
 not_equals_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns rows where all column values are not equal to the given value',
@@ -545,7 +553,10 @@ not_equals_path_kwargs: Dict[str, Any] = {
     ],
     'tags': ['Data'],
     'produces': ['application/json'],
-    'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}}}
+    'responses': {
+        '200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}},
+        '500': {'description': 'Error response', 'schema': {'$ref': '#/definitions/ErrorResponse'}}
+    }
 }
 notin_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns rows where all column values are not within the array content',
@@ -564,7 +575,10 @@ notin_path_kwargs: Dict[str, Any] = {
     ],
     'tags': ['Data'],
     'produces': ['application/json'],
-    'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}}}
+    'responses': {
+        '200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}},
+        '500': {'description': 'Error response', 'schema': {'$ref': '#/definitions/ErrorResponse'}}
+    }
 }
 sample_path_kwargs: Dict[str, Any] = {
     'summary': 'Returns random rows from the dataframe.',
@@ -582,7 +596,10 @@ sample_path_kwargs: Dict[str, Any] = {
     ],
     'tags': ['Data'],
     'produces': ['application/json'],
-    'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/SampleResponse'}}}
+    'responses': {
+        '200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/SampleResponse'}},
+        '500': {'description': 'Error response', 'schema': {'$ref': '#/definitions/ErrorResponse'}}
+    }
 }
 values_path_kwargs: Dict[str, Any] = {
     'summary': '',
@@ -600,7 +617,10 @@ values_path_kwargs: Dict[str, Any] = {
     ],
     'tags': ['Data'],
     'produces': ['application/json'],
-    'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}}}
+    'responses': {
+        '200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/ValuesResponse'}},
+        '500': {'description': 'Error response', 'schema': {'$ref': '#/definitions/ErrorResponse'}}
+    }
 }
 
 definitions = {
@@ -624,7 +644,8 @@ definitions = {
     'SampleRequest': sample_request_body,
     'SampleResponse': sample_response,
     'ValuesRequest': values_request_body,
-    'ValuesResponse': values_response
+    'ValuesResponse': values_response,
+    'ErrorResponse': error_response
 }
 
 tags = [
