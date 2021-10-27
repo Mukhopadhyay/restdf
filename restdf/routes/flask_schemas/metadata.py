@@ -7,7 +7,7 @@ COLUMNS_SCHEMA = {
         'example': 'column1'
     },
     'default': None,
-    'example': None
+    'example': []
 }
 
 # Error Response
@@ -163,7 +163,8 @@ equals_request_body = {
         },
         'value': {
             'type': 'object',
-            'default': 18
+            'default': "",
+            'example': 0
         }
     }
 }
@@ -230,11 +231,13 @@ head_request_body = {
         'columns': COLUMNS_SCHEMA,
         'index': {
             'type': 'boolean',
-            'default': True
+            'default': True,
+            'example': True
         },
         'n': {
             'type': 'integer',
-            'default': 5
+            'default': 5,
+            'example': 5
         }
     }
 }
@@ -263,7 +266,8 @@ isin_request_body = {
         },
         'values': {
             'type': 'object',
-            'default': []
+            'default': [],
+            'example': []
         }
     }
 }
@@ -282,7 +286,8 @@ not_equals_request_body = {
         },
         'value': {
             'type': 'object',
-            'default': 18
+            'default': 0,
+            'example': 0
         }
     }
 }
@@ -301,7 +306,8 @@ notin_request_body = {
         },
         'values': {
             'type': 'object',
-            'default': []
+            'default': [],
+            'example': []
         }
     }
 }
@@ -361,7 +367,8 @@ values_request_body = {
         },
         'n': {
             'type': 'integer',
-            'default': 5
+            'default': 5,
+            'example': 5
         }
     }
 }
@@ -440,8 +447,8 @@ nulls_path_kwargs: Dict[str, Any] = {
     'responses': {'200': {'description': 'Successful response', 'schema': {'$ref': '#/definitions/NullsResponse'}}}
 }
 value_counts_path_kwargs: Dict[str, Any] = {
-    'summary': '',
-    'description': '',
+    'summary': 'Returns the value_count result of a column',
+    'description': 'This endpoint returns the response from <code>pd.Series.value_counts()</code> & returns the result.',
     'parameters': [],
     'tags': ['Metadata'],
     'produces': ['application/json'],
@@ -602,8 +609,9 @@ sample_path_kwargs: Dict[str, Any] = {
     }
 }
 values_path_kwargs: Dict[str, Any] = {
-    'summary': '',
-    'description': '',
+    'summary': 'Returns values for a selected column',
+    'description': 'This method returns values from the passed <code>column_name</code>, using <code>pd[column_name]</code>, \
+                    If <b>n</b> exceeds the size of the dataframe, no warnings are given!',
     'parameters': [
         {
             'name': 'request_body',

@@ -15,13 +15,29 @@ ipynb_checkpoints/
 *.out
 *.Log
 
-# Venv
-venv
-dev_venv
+# Distribution
+*.egg-info
+*.egg
 
-# Test
+
+# Environments
+.env
+.venv
+env/
+venv/
+dev_venv/
+ENV/
+env.bak/
+venv.bak/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# tox / pytest / coverage reports
+.tox
+*/.tox
+.pytest_cache/
 .coverage
-.pytest_cache
-*/.pytest_cache
-.mypy_cache
-*/.mypy_cache
+.coverage.*

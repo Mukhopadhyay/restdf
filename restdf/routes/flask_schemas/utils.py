@@ -8,7 +8,7 @@ endpoints = [
     ('/describe', 'post', metadata.describe_path_kwargs),
     ('/dtypes', 'get', metadata.dtypes_path_kwargs),
     ('/info', 'get', metadata.info_path_kwargs),
-    ('/nulls', 'get', metadata.dtypes_path_kwargs),
+    ('/nulls', 'get', metadata.nulls_path_kwargs),
     ('/value_counts/{column_name}', 'get', metadata.value_counts_path_kwargs),
     ('/equals/{column_name}', 'post', metadata.equals_path_kwargs),
     ('/find_string/{column_name}', 'post', metadata.find_string_path_kwargs),
