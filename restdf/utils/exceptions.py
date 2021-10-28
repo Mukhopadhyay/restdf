@@ -69,7 +69,7 @@ class InvalidRequestBodyError(Error):
     Exception raised when passed request body has invalid values in them.
 
     Attributes:
-
+        message:    str:                Explanation of the error.
     """
     def __init__(self, message: str) -> None:
         super().__init__(f'[{self.__class__.__name__}] {message}\n')

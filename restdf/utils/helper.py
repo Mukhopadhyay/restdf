@@ -10,6 +10,15 @@ from ..routes.flask_schemas import utils
 
 
 def get_index(filename: str) -> Dict[str, Any]:
+    """
+    Generates & returns the response for the index ('/') route.
+
+    Attributes:
+        filename:       str:        Name of file using which on which we're running the server.
+
+    Returns:
+        Dict:                       Response for the index route containing endpoint details.
+    """
     INDEX_RESPONSE = {
         'filename': filename,
         'endpoints': [
@@ -22,6 +31,22 @@ def get_index(filename: str) -> Dict[str, Any]:
 
 
 def get_stats(framework: str, framework_version: str, stats_dict: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Generates & returns some of the information about the server. Current provides the following
+    details:
+        * Server    [Provides framework name and version]
+        * Python    [Returns Python version]
+        * Runtime   [Some of the Runtime details (# requests, running since and so on)]
+        * Device    [Info for the running devices]
+
+    Attributes:
+        framework:          str:            Framework being used (Flask, FastAPI (later maybe))
+        framework_version:  str:            Version of the framework
+        stats_dict:         Dict:           Dictionary containing some runtime info.
+
+    Returns:
+        Dict:                               Response for the /stats endpoint.
+    """
     vm = psutil.virtual_memory()
     stats = {
         'Server': {
@@ -55,6 +80,15 @@ def get_stats(framework: str, framework_version: str, stats_dict: Dict[str, Any]
 
 
 def get_dataframe_columns(df: pd.DataFrame) -> List[str]:
+    """
+    This method returns the columns available in the dataframe.
+
+    Attributes:
+        df:         pd.DataFrame:
+
+    Returns:
+        List[str]:                      List containing the dataframe columns.
+    """
     return list(df.columns.tolist())
 
 
