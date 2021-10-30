@@ -20,7 +20,9 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument('-p', '--port', metavar='PORT', action='store', type=int)
     # DEBUG option for the server
     parser.add_argument('-d', '--debug', action='store_true')
-    # Log path
-    parser.add_argument('-l', '--log', metavar='LOG', action='store', type=str)
+    # API title
+    parser.add_argument('-t', '--title', metavar='TITLE', action='store', type=str)
+    # User email
+    parser.add_argument('-e', '--email', metavar='EMAIL', action='store', type=str)
 
     return parser

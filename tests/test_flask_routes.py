@@ -24,16 +24,16 @@ routes = [
     '/describe',
     '/info',
     '/dtypes',
-    '/value_counts/<column_name>',
+    '/value_counts/{column_name}',
     '/nulls',
     '/head',
     '/sample',
-    '/values/<column_name>',
-    '/isin/<column_name>',
-    '/notin/<column_name>',
-    '/equals/<column_name>',
-    '/not_equals/<column_name>',
-    '/find_string/<column_name>'
+    '/values/{column_name}',
+    '/isin/{column_name}',
+    '/notin/{column_name}',
+    '/equals/{column_name}',
+    '/not_equals/{column_name}',
+    '/find_string/{column_name}'
 ]
 
 # Test dataframe columns
