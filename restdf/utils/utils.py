@@ -2,6 +2,21 @@ import argparse
 
 
 def get_parser() -> argparse.ArgumentParser:
+    """
+    This method returns the argument parser for the RestDF __main__ module.
+    The namespace contains the following options:
+        * path:     path to the dataset
+        * host:     the hostname to listen on. Defaults to 'localhost'
+        * port:     the port of the webserver. Defaults to 8000
+        * debug:    settings this flag, makes the server run on `debug` mode.
+        * title:    title of the API.
+        * email:    Developer email for the SwaggerUI.
+
+    Args:
+        [None]
+    Returns:
+        ArgumentParser:     The argument parser with the namespace configured, ready to be parsed.
+    """
 
     parser = argparse.ArgumentParser(
         prog='RestDF',

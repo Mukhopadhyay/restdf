@@ -244,6 +244,21 @@ def get_dataframe_sample(df: pd.DataFrame, request_body: Dict[str, Any]) -> List
 
 
 def get_column_value(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> Union[List[object], Dict[str, Any]]:
+    """
+    Given the 'column_name' this method returns the values for the rows. Accepts the request_body
+    dictionary received.
+    Following attributes are looked for in the request_body dictionary:
+        * n:            Number of random rows to return
+
+    Args:
+        df:             pd.DataFrame:           DataFrame on which RestDF is running.
+        column_name:    str:                    Name of the columne for which we want values.
+        request_body:   dict:                   Request body received via /column endpoint.
+
+    Returns:
+        list | dict:    List or dictionary containing selected column's values.
+
+    """
     if request_body.get('add_index', False):
         return dict(df[column_name].head(request_body.get('n')).to_dict())
     else:
@@ -251,6 +266,26 @@ def get_column_value(df: pd.DataFrame, column_name: str, request_body: Dict[str,
 
 
 def get_isin_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Given the dataframe and the values, this method returns the rows where the column
+    values are within the given values (array).
+    Following attributes are looked for in the request_body dictionary:
+        * values:           list | None:        List of values that are to be checked in the isin operation. if column_name is 'column1'
+                                                and the 'values' in request_body is ['a', 'b'], then this method will only return rows
+                                                where the values of column1 are either 'a' or 'b'.
+        * as_string:        bool:               Converts the entire column into a string before performing the isin operation. (Default: False)
+        * columns:          list                List of columns that're to be returned as response.
+        * index:            bool:               Wheather to include the index with the row objects in response. If yes,
+                                                then the index of the row will be returned as '_index'.
+
+    Args:
+        df:             pd.DataFrame:           DataFrame on which RestDF is running.
+        column_name:    str:                    Name of the columne on which we're performing the isin operation.
+        request_body:   dict:                   Request body received via /isin endpoint.
+
+    Returns:
+        list:    List containing the rows satisfying the isin condition.
+    """
     values = request_body.get('values', [])
     if not isinstance(values, list):
         raise exceptions.InvalidRequestBodyError(f"'values' needs to be a list, got {type(values)}")
@@ -276,6 +311,26 @@ def get_isin_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, 
 
 
 def get_notin_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Given the dataframe and the values, this method returns the rows where the column
+    values are not within the given values (array).
+    Following attributes are looked for in the request_body dictionary:
+        * values:           list | None:        List of values that are to be checked in the notin operation. if column_name is 'column1'
+                                                and the 'values' in request_body is ['a', 'b'], then this method will only return rows
+                                                where the values of column1 are not either 'a' or 'b'.
+        * as_string:        bool:               Converts the entire column into a string before performing the isin operation. (Default: False)
+        * columns:          list                List of columns that're to be returned as response.
+        * index:            bool:               Wheather to include the index with the row objects in response. If yes,
+                                                then the index of the row will be returned as '_index'.
+
+    Args:
+        df:             pd.DataFrame:           DataFrame on which RestDF is running.
+        column_name:    str:                    Name of the columne on which we're performing the isin operation.
+        request_body:   dict:                   Request body received via /notin endpoint.
+
+    Returns:
+        list:    List containing the rows satisfying the notin condition.
+    """
     values = request_body.get('values', [])
 
     temp_df = df[~(df[column_name].astype(str).isin(values))] if (
@@ -299,6 +354,26 @@ def get_notin_values(df: pd.DataFrame, column_name: str, request_body: Dict[str,
 
 
 def get_equal_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Given the dataframe and the values, this method returns the rows where the column
+    values are equal to the given value (from the request body).
+    Following attributes are looked for in the request_body dictionary:
+        * value:            object:             Value that is to be checked for equality in the pd.Series
+                                                for example, if value is `1` and the column name is `column1`
+                                                then for all rows where column1 == `1`, will be returned.
+        * as_string:        bool:               Converts the entire column into a string before performing the equal operation. (Default: False)
+        * columns:          list                List of columns that're to be returned as response.
+        * index:            bool:               Wheather to include the index with the row objects in response. If yes,
+                                                then the index of the row will be returned as '_index'.
+
+    Args:
+        df:             pd.DataFrame:           DataFrame on which RestDF is running.
+        column_name:    str:                    Name of the columne on which we're performing the equal operation.
+        request_body:   dict:                   Request body received via /equal endpoint.
+
+    Returns:
+        list:           List containing the rows satisfying the equality condition.
+    """
     value = request_body.get('value')
 
     temp_df = df[df[column_name].astype(str) == value] if (
@@ -321,6 +396,26 @@ def get_equal_values(df: pd.DataFrame, column_name: str, request_body: Dict[str,
 
 
 def get_not_equal_values(df: pd.DataFrame, column_name: str, request_body: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Given the dataframe and the values, this method returns the rows where the column
+    values are not equal to the given value (from the request body).
+    Following attributes are looked for in the request_body dictionary:
+        * value:            object:             Value that is to be checked for not equals in the pd.Series
+                                                for example, if value is `1` and the column name is `column1`
+                                                then for all rows where column1 != `1`, will be returned.
+        * as_string:        bool:               Converts the entire column into a string before performing the equal operation. (Default: False)
+        * columns:          list                List of columns that're to be returned as response.
+        * index:            bool:               Wheather to include the index with the row objects in response. If yes,
+                                                then the index of the row will be returned as '_index'.
+
+    Args:
+        df:             pd.DataFrame:           DataFrame on which RestDF is running.
+        column_name:    str:                    Name of the columne on which we're performing the not equal operation.
+        request_body:   dict:                   Request body received via /not_equals endpoint.
+
+    Returns:
+        list:           List containing the rows satisfying the non-equality condition.
+    """
     value = request_body.get('value')
 
     temp_df = df[~(df[column_name].astype(str) == value)] if (
@@ -345,6 +440,33 @@ def get_not_equal_values(df: pd.DataFrame, column_name: str, request_body: Dict[
 def get_find_string_values(df: pd.DataFrame,
                            column_name: str,
                            request_body: Dict[str, Any]) -> Tuple[Dict[str, Any], List[Dict[str, Any]], int]:
+    """
+    Given the dataframe and the search pattern, this method uses the pd.Series.str.contains
+    method and search for rows where the pattern matches the given column.
+    For more info on the actual pandas method please refer to this page:
+    https://pandas.pydata.org/docs/reference/api/pandas.Series.str.contains.html
+
+    Following attributes are looked for in the request_body dictionary:
+        * pat:              str:                Character sequence or regular expr.
+        * case:             bool:               If True, case sensitive (default: False)
+        * flags:            int:                Flags to pass through to the re module, e.g. re.IGNORECASE
+                                                default: 0 (no flags)
+        * na:               scalar:             Fill value for missing values. The default depends on dtype of the array
+        * regex:            bool:               If True, assumes the pat is a regular expression.
+                                                If False, treats the pat as a literal string.
+                                                default: True
+        * columns:          list:               List of columns that're to be returned as response.
+        * index:            bool:               Wheather to include the index with the row objects in response. If yes,
+                                                then the index of the row will be returned as '_index'.
+
+    Args:
+        df:             pd.DataFrame:           DataFrame on which RestDF is running.
+        column_name:    str:                    Name of the columne on which we're performing the find string operation.
+        request_body:   dict:                   Request body received via /find_string endpoint.
+
+    Returns:
+        list:           List containing the rows satisfying the string search operation.
+    """
 
     options = {
         'pat': request_body.get('pattern', ''),
@@ -372,4 +494,14 @@ def get_find_string_values(df: pd.DataFrame,
 
 
 def get_error_response(exception: object) -> Dict[str, str]:
+    """
+    This method expects the exception object and returns the returns
+    the dictionary containing the error messages.
+
+    Args:
+        exception:      object:     Caught exception object.
+
+    Returns:
+        dict:           Dictionary containing the exception message, type and the module of the exception.
+    """
     return {'err': repr(exception), 'type': type(exception).__name__, 'module': type(exception).__module__}

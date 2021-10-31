@@ -1,3 +1,6 @@
+"""
+Flask Application for RestDF
+"""
 # Built-in modules
 import time
 from datetime import datetime
@@ -25,6 +28,19 @@ _values_requests: int = 0
 
 
 def get_flask_app(df: pd.DataFrame, filename: str, api_title: Optional[str] = None, user_email: Optional[str] = None) -> Flask:
+    """
+    Returns the flask app containing the endpoints.
+
+    Args:
+        df:             pd.DataFrame:       DataFrame which is to be used for the RestDF API.
+        filename:       str:                Name of the file being used.
+        api_title:      str:                Name of the API. If not provided, the name defaults following format
+                                            `{filename} API`
+        user_email:     str:                Email of the user, if not provided, then defaults to the author's email.
+
+    Returns:
+        flask.Flask:    Returns the flask app containing the endpoints.
+    """
     global dataframe
     global file_name
 
@@ -61,6 +77,7 @@ def get_flask_app(df: pd.DataFrame, filename: str, api_title: Optional[str] = No
 @cross_origin
 @app.route('/', methods=['GET'])
 def root() -> Response:
+    """Handler for '/' endpoint"""
     global _total_requests
     _total_requests += 1
     return jsonify(helper.get_index(file_name))
@@ -69,6 +86,7 @@ def root() -> Response:
 @cross_origin
 @app.route('/stats', methods=['GET'])
 def get_stats() -> Response:
+    """Handler for '/stats' endpoint"""
     global _total_requests
     _total_requests += 1
     stats = {
@@ -84,6 +102,7 @@ def get_stats() -> Response:
 @cross_origin
 @app.route('/columns', methods=['GET'])
 def get_columns() -> Response:
+    """Handler for '/columns' endpoint"""
     global _total_requests
     _total_requests += 1
     return jsonify({'columns': helper.get_dataframe_columns(dataframe)})
@@ -92,6 +111,7 @@ def get_columns() -> Response:
 @cross_origin
 @app.route('/describe', methods=['POST'])
 def get_describe() -> Tuple[Response, int]:
+    """Handler for '/describe' endpoint"""
     global _total_requests
     _total_requests += 1
     request_body = request.get_json()
@@ -109,6 +129,7 @@ def get_describe() -> Tuple[Response, int]:
 @cross_origin
 @app.route('/info', methods=['GET'])
 def get_info() -> Response:
+    """Handler for '/info' endpoint"""
     global _total_requests
     _total_requests += 1
 
@@ -123,6 +144,7 @@ def get_info() -> Response:
 @cross_origin
 @app.route('/dtypes', methods=['GET'])
 def get_dtypes() -> Response:
+    """Handler for '/dtypes' endpoint"""
     global _total_requests
     _total_requests += 1
 
@@ -134,6 +156,7 @@ def get_dtypes() -> Response:
 @cross_origin
 @app.route('/value_counts/<column_name>', methods=['GET'])
 def get_value_counts(column_name: str) -> Tuple[Response, int]:
+    """Handler for '/value_counts' endpoint"""
     global _total_requests
     _total_requests += 1
 
@@ -148,6 +171,7 @@ def get_value_counts(column_name: str) -> Tuple[Response, int]:
 @cross_origin
 @app.route('/nulls', methods=['GET'])
 def get_nulls() -> Tuple[Response, int]:
+    """Handler for '/nulls' endpoint"""
     global _total_requests
     _total_requests += 1
 
@@ -158,6 +182,7 @@ def get_nulls() -> Tuple[Response, int]:
 @cross_origin
 @app.route('/head', methods=['POST'])
 def get_df_head() -> Tuple[Response, int]:
+    """Handler for '/head' endpoint"""
     global _total_requests
     _total_requests += 1
 
@@ -175,6 +200,7 @@ def get_df_head() -> Tuple[Response, int]:
 @cross_origin
 @app.route('/sample', methods=['POST'])
 def get_df_sample() -> Tuple[Response, int]:
+    """Handler for '/sample' endpoint"""
     global _total_requests
     _total_requests += 1
 
@@ -194,6 +220,7 @@ def get_df_sample() -> Tuple[Response, int]:
 @cross_origin
 @app.route('/values/<column_name>', methods=['POST'])
 def get_column_value(column_name: str) -> Tuple[Response, int]:
+    """Handler for '/values' endpoint"""
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -214,6 +241,7 @@ def get_column_value(column_name: str) -> Tuple[Response, int]:
 @cross_origin
 @app.route('/isin/<column_name>', methods=['POST'])
 def get_isin_values(column_name: str) -> Tuple[Response, int]:
+    """Handler for '/isin' endpoint"""
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -234,6 +262,7 @@ def get_isin_values(column_name: str) -> Tuple[Response, int]:
 @cross_origin
 @app.route('/notin/<column_name>', methods=['POST'])
 def get_notin_values(column_name: str) -> Tuple[Response, int]:
+    """Handler for '/notin' endpoint"""
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -254,6 +283,7 @@ def get_notin_values(column_name: str) -> Tuple[Response, int]:
 @cross_origin
 @app.route('/equals/<column_name>', methods=['POST'])
 def get_equal_values(column_name: str) -> Tuple[Response, int]:
+    """Handler for '/equals' endpoint"""
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -275,6 +305,7 @@ def get_equal_values(column_name: str) -> Tuple[Response, int]:
 @cross_origin
 @app.route('/not_equals/<column_name>', methods=['POST'])
 def get_not_equal_values(column_name: str) -> Tuple[Response, int]:
+    """Handler for '/not_equals' endpoint"""
     global _total_requests
     global _values_requests
     _total_requests += 1
@@ -296,6 +327,7 @@ def get_not_equal_values(column_name: str) -> Tuple[Response, int]:
 @cross_origin
 @app.route('/find_string/<column_name>', methods=['POST'])
 def get_find_string_values(column_name: str) -> Tuple[Response, int]:
+    """Handler for '/find_string' endpoint"""
     global _total_requests
     global _values_requests
     _total_requests += 1
