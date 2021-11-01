@@ -428,7 +428,7 @@ dtypes_path_kwargs: Dict[str, Any] = {
 }
 
 info_path_kwargs: Dict[str, Any] = {
-    'summary': 'Returns some dataframe into (Datatypes, Non-null counts etc)',
+    'summary': 'Returns some dataframe info (Datatypes, Non-null counts etc)',
     'description': 'This endpoint returns the response from <code>df.info()</code> & returns the result.',
     'parameters': [],
     'tags': ['Metadata'],
