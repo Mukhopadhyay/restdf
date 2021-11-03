@@ -10,6 +10,10 @@
 
 * Source code: [https://github.com/Mukhopadhyay/restdf](https://github.com/Mukhopadhyay/restdf)
 
+### Starting `RestDF`
+```bash
+$ python -m restdf https://raw.githubusercontent.com/cs109/2014_data/master/diamonds.csv -d -p 5000
+```
 
 ### Endpoints
 |**Type**|**Method**|**Endpoint**|**Description**|**Request Body**|
