@@ -5,11 +5,13 @@
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](https://github.com/Mukhopadhyay/restdf/blob/master/LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![Documentation Status](https://readthedocs.org/projects/restdf/badge/?version=latest)](https://restdf.readthedocs.io/en/latest/?badge=latest)
 
 **RestDF** is a command line utility for running any `pandas.DataFrame` compatible datasets as a Rest API, with built-in `SwaggerUI` support.
 
 * Source code: [https://github.com/Mukhopadhyay/restdf](https://github.com/Mukhopadhyay/restdf)
 * License: [MIT](https://github.com/Mukhopadhyay/restdf/blob/master/LICENSE)
+* Documentation: [https://restdf.readthedocs.io/en/master/](https://restdf.readthedocs.io/en/master/)
 
 ### Running `RestDF`
 
