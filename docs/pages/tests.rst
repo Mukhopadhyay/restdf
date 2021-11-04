@@ -1,7 +1,10 @@
 ================
-RestDF Tests
+Testing RestDF
 ================
 
+
+Testing using Pytest
+~~~~~~~~~~~~~~~~~~~~
 **RestDF** tests are written using ``pytest``.
 
 .. code:: bash

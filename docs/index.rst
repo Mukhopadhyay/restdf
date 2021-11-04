@@ -20,7 +20,6 @@ RestDF
 
 .. toctree::
    :maxdepth: 2
-   :caption: Navigation:
 
    pages/endpoints
    pages/tests
@@ -54,7 +53,7 @@ dataset on `localhost:5000/docs <http://localhost:5000/docs>`__
    :alt: Documentation Status
 
 
-Search
-==================
+.. Search
+.. ==================
 
-* :ref:`search`
+.. * :ref:`search`
