@@ -1,4 +1,0 @@
-RestDF Endpoints
-================
-
-Endpoints available...
