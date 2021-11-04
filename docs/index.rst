@@ -54,7 +54,7 @@ dataset on `localhost:5000/docs <http://localhost:5000/docs>`__
    :alt: Documentation Status
 
 
-Indices and tables
+Search
 ==================
 
 * :ref:`search`
