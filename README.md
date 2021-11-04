@@ -11,13 +11,13 @@
 * Source code: [https://github.com/Mukhopadhyay/restdf](https://github.com/Mukhopadhyay/restdf)
 * License: [MIT](https://github.com/Mukhopadhyay/restdf/blob/master/LICENSE)
 
-### Starting `RestDF`
+### Running `RestDF`
 
 `RestDF` can be run like any other python module using the `-m` flag, additional flags can be used to configure the server.
 Following will start a server with [this](https://raw.githubusercontent.com/cs109/2014_data/master/diamonds.csv) dataset on [localhost:5000/docs](http://0.0.0.0:5000/docs)
 
 ```bash
-$ python -m restdf https://raw.githubusercontent.com/cs109/2014_data/master/diamonds.csv
+python -m restdf https://raw.githubusercontent.com/cs109/2014_data/master/diamonds.csv
 ```
 ### Command line arguments:
 
@@ -32,7 +32,7 @@ $ python -m restdf https://raw.githubusercontent.com/cs109/2014_data/master/diam
 
 Using all of these options our command would look something like this
 ```bash
-$ python -m restdf https://raw.githubusercontent.com/cs109/2014_data/master/diamonds.csv --host 0.0.0.0 --port 5555 -d -t "Diamonds Dataset" -e "username@email.com"
+python -m restdf https://raw.githubusercontent.com/cs109/2014_data/master/diamonds.csv --host 0.0.0.0 --port 5555 -d -t "Diamonds Dataset" -e "username@email.com"
 ```
 this would run start the server on the port number `5555`.
 
@@ -52,36 +52,36 @@ These endpoints provides some documentation on the API. Following are the availa
 * `Metadata`<br/>
 As the name suggests, these provide some information about the dataset itself.
 
-|**Type**|**Method**|**Endpoint**|**Description**|**Request Body**|
-|:-------|:---------|:-----------|:--------------|:---------------|
-|**Metadata**|`GET`|`/columns`|Get the dataframe columns||
-|**Metadata**|`POST`|`/describe`|Describes different properties of the dataframe|`{"datetime_is_numeric": false,"exclude": ["O"],"include": ["int"],"percentiles": [0.01,0.25,0.75,0.99]}`|
-|**Metadata**|`GET`|`/dtypes`|Returns the datatype of all columns||
-|**Metadata**|`GET`|`/info`|Returns some dataframe info (Datatype, Non-null counts etc)||
-|**Metadata**|`GET`|`/nulls`|Returns the count of nulls in the dataframe||
-|**Metadata**|`GET`|`/value_counts/{column_name}`|Returns the value_count results of a column||
+|**Type**|**Method**|**Endpoint**|**Description**|
+|:-------|:---------|:-----------|:--------------|
+|**Metadata**|`GET`|`/columns`|Get the dataframe columns|
+|**Metadata**|`POST`|`/describe`|Describes different properties of the dataframe|
+|**Metadata**|`GET`|`/dtypes`|Returns the datatype of all columns|
+|**Metadata**|`GET`|`/info`|Returns some dataframe info (Datatype, Non-null counts etc)|
+|**Metadata**|`GET`|`/nulls`|Returns the count of nulls in the dataframe|
+|**Metadata**|`GET`|`/value_counts/{column_name}`|Returns the value_count results of a column|
 
 * `Data`<br/>
 These endpoints returns values from the dataset.
 
-|**Type**|**Method**|**Endpoint**|**Description**|**Request Body**|
-|:-------|:---------|:-----------|:--------------|:---------------|
-|**Data**|`POST`|`/equals/{column_name}`|Returns rows where all column values are exactly equal to the given value|`{"as_string": false,"columns": [],"index": true,"value": 0}`|
-|**Data**|`POST`|`/find_string/{column_name}`|Returns rows where all string values contains given pattern|`{"case": false,"columns": [],"flags": 0,"index": true,"na": true,"pattern": "string","regex": false`|
-|**Data**|`POST`|`/head`|Returns the head of the dataframe|`{"columns": [],"index": true,"n": 5}`|
-|**Data**|`POST`|`/isin/{column_name}`|Returns rows where all column values are within the array content|`{"as_string": false,"columns": [],"index": true,"values": []}`|
-|**Data**|`POST`|`/not_equals/{column_name}`|Returns rows where all column values are not equal to the given value|`{"as_string": false,"columns": [],"index": true,"value": 0}`|
-|**Data**|`POST`|`/notin/{column_name}`|Returns rows where all column values are not within the array content|`{"as_string": false,"columns": [],"index": true,"values": []}`|
-|**Data**|`POST`|`/sample/{column_name}`|Returns random rows from the dataframe|`{"columns": [],"frac": null,"index": true,"n": 1,"random_state": 0,"replace": false,"weights": null}`|
-|**Data**|`POST`|`/values/{column_name}`|Returns values for a selected column|`{"add_index": true,"n": 5}`|
+|**Type**|**Method**|**Endpoint**|**Description**|
+|:-------|:---------|:-----------|:--------------|
+|**Data**|`POST`|`/equals/{column_name}`|Returns rows where all column values are exactly equal to the given value|
+|**Data**|`POST`|`/find_string/{column_name}`|Returns rows where all string values contains given pattern|
+|**Data**|`POST`|`/head`|Returns the head of the dataframe|
+|**Data**|`POST`|`/isin/{column_name}`|Returns rows where all column values are within the array content|
+|**Data**|`POST`|`/not_equals/{column_name}`|Returns rows where all column values are not equal to the given value|
+|**Data**|`POST`|`/notin/{column_name}`|Returns rows where all column values are not within the array content|
+|**Data**|`POST`|`/sample/{column_name}`|Returns random rows from the dataframe|
+|**Data**|`POST`|`/values/{column_name}`|Returns values for a selected column|
 
 
 <br/>
 
 ### Testing:
-**RestDF** tests are written in `pytest`,
+**RestDF** tests are written using `pytest`,
 ```bash
-$ pytest -v
+pytest -v
 ```
 The available pytest `markers` are:
 |**Name**|**Description**|
