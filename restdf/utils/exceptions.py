@@ -1,5 +1,5 @@
 """
-Exceptions for RestDf
+Exceptions for RestDF
 """
 
 from typing import Union, List

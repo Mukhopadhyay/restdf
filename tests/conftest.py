@@ -4,7 +4,6 @@ except ModuleNotFoundError:
     import tests.context
 
 import pytest
-from flask import Flask
 
 from restdf.utils import io
 from restdf.utils import exceptions
@@ -41,7 +40,7 @@ def flask_client():
     df = io.read_from_csv('tests/test_data/test.csv')
 
     app = get_flask_app(df, 'test.csv')
-    
+
     app.config['TESTING'] = True
 
     with app.app_context():
