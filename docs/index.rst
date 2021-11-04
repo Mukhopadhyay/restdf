@@ -20,7 +20,7 @@ RestDF
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Navigation:
 
    pages/endpoints
    pages/tests
@@ -38,7 +38,6 @@ dataset on `localhost:5000/docs <http://localhost:5000/docs>`__
 .. code:: bash
 
     python -m restdf https://raw.githubusercontent.com/cs109/2014_data/master/diamonds.csv
-
 
 
 
