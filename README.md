@@ -11,7 +11,7 @@
 
 * Source code: [https://github.com/Mukhopadhyay/restdf](https://github.com/Mukhopadhyay/restdf)
 * License: [MIT](https://github.com/Mukhopadhyay/restdf/blob/master/LICENSE)
-* Documentation: [https://restdf.readthedocs.io/en/master/](https://restdf.readthedocs.io/en/master/)
+* Documentation: [http://restdf.rtfd.io/](http://restdf.rtfd.io/)
 
 ### Running `RestDF`
 
@@ -93,3 +93,17 @@ The available pytest `markers` are:
 |`flask`|All Flask related tests|
 |`routes`|All endpoint related tests|
 |`utils`|Testing all utility scripts|
+
+### Documentations
+
+Read the documentaion online at: [http://restdf.rtfd.io/](http://restdf.rtfd.io/)
+Or build it locally from the `docs/` directory using
+
+**Linux:**
+```bash
+make html
+```
+**Windows**
+```bash
+make.bat html
+```
