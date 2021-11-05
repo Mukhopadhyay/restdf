@@ -21,9 +21,9 @@ RestDF
 .. toctree::
    :maxdepth: 2
 
+   pages/command-line-arguments
    pages/endpoints
    pages/tests
-   pages/command-line-arguments
 
 Running ``RestDF``
 ~~~~~~~~~~~~~~~~~~
