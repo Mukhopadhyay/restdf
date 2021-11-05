@@ -1,6 +1,6 @@
-=============================
-Endpoints available in RestDF
-=============================
+===================
+Available Endpoints
+===================
 
 The responses from ``RestDF`` can be categorized into three following types:
   - ``Docs``
@@ -20,6 +20,88 @@ These endpoints provides some documentation on the API. Following are the availa
 +--------------+----------------+--------------------------------------------------------+
 | ``GET``      | ``/stats``     | Provides basic Stats about the currently running API   |
 +--------------+----------------+--------------------------------------------------------+
+
+Index route (``/``)
+*******************
+
+Index route, gives brief intro about the API.
+
+**Type:** ``GET``
+
+``/`` Example Response
+^^^^^^^^^^^^^^^^^^^^^^
+.. code:: javascript
+
+    {
+      "endpoints": [
+        {
+          "method": "get",
+          "name": "/",
+          "summary": "Index route, gives brief intro about the API"
+        },
+        {
+          "method": "get",
+          "name": "/stats",
+          "summary": "Provides basic Stats about the currently running API"
+        },
+        {
+          "method": "get",
+          "name": "/columns",
+          "summary": "Get the dataframe columns"
+        }
+      ],
+      "filename": "dataset.csv"
+    }
+
+``SwaggerUI`` (``/docs``)
+*******************************
+
+SwaggerUI endpoint endpoint, which is generated using `flasgger <https://github.com/flasgger/flasgger>`__. The OpenAPI definitions are generated
+in form of a dictionary in runtime, to make some attributes such as ``column_name`` dynamic Enums. 
+
+**Type:** ``GET``
+
+Device/Server Statistics endpoint (``/stats``)
+**********************************************
+
+Provides basic Stats about the currently running API. Returns details such as
+
+**Type:** ``GET``
+
+* Device stats (available, free, used, total memory of the device)
+* Python version
+* Runtime informations (# Requests, filename, running_since, runtime_duration)
+* Server Framework info (Frameword being used & its version)
+
+``/stats`` Example Response
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. code:: javascript
+
+    {
+      "Device": {
+        "Memory": {
+          "available": 3022258176,
+          "free": 3022258176
+        },
+        "cpu_percent": 23.5
+      },
+      "Python": {
+        "version": "3.8.7 (tags/v3.8.7:6503f05, Dec 21 2020, 17:59:51) [MSC v.1928 64 bit (AMD64)]"
+      },
+      "Runtime": {
+        "API": {
+          "/values_requests": 0
+        },
+        "filename": "test.csv",
+        "running_since": "2021-11-05 05:20:27.363299",
+        "runtime_duration": 818.451938867569
+      },
+      "Server": {
+        "name": "Flask",
+        "version": "2.0.2"
+      }
+    }
+
 
 
 Metadata
@@ -41,6 +123,113 @@ As the name suggests, these provide some information about the dataset itself.
 +--------------+-----------------------------------+---------------------------------------------------------------+
 | ``GET``      | ``/value_counts/{column_name}``   | Returns the value\_count results of a column                  |
 +--------------+-----------------------------------+---------------------------------------------------------------+
+
+Columns endpoint (``/columns``)
+*******************************
+
+Returns the columns available in the dataframe.
+
+**Type:** ``GET``
+
+``/columns`` Example Response
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: javascript
+
+    {
+      "columns": [
+        "column1",
+        "column2",
+        "column3"
+      ]
+    }
+
+Dataset description endpoint (``/describe``)
+********************************************
+
+Returns some dataframe info (Datatype, Non-null counts etc). This endpoint 
+returns the response from ``df.describe()`` and returns the result.
+
+**Type:** ``POST``
+
+``/describe`` Request Body
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+The following request body is the usual arguments for ``df.describe()``. For more detailed info about the 
+meaning of the arguments please refer to this documentation from `pandas <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.describe.html>`__
+official documentation.
+
+.. code:: javascript
+
+  {
+    "datetime_is_numeric": false,
+    "exclude": [
+      "O"
+    ],
+    "include": [
+      "int"
+    ],
+    "percentiles": [
+      0.01,
+      0.25,
+      0.75,
+      0.99
+    ]
+  }
+
+``/describe`` Example Response
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: javascript
+
+  {
+    "description": {
+      "Parch": {
+        "1%": 0,
+        "25%": 0,
+        "50%": 0,
+        "75%": 0,
+        "99%": 2,
+        "count": 30,
+        "max": 2,
+        "mean": 0.3,
+        "min": 0,
+        "std": 0.5959634332684375
+      },
+      "PassengerId": {
+        "1%": 927.47,
+        "25%": 1037.75,
+        "50%": 1102,
+        "75%": 1215,
+        "99%": 1280.04,
+        "count": 30,
+        "max": 1287,
+        "mean": 1112.4666666666667,
+        "min": 915,
+        "std": 107.31189905206654
+      }
+    }
+  }
+
+Datatypes endpoint (``/dtypes``)
+**********************************
+
+Returns the datatypes of the columns. This endpoint returns the response from ``df.dtypes``
+and returns the result.
+
+**Type:** ``POST``
+
+``/dtypes`` Example Response
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: javascript
+
+  {
+    "dtypes": {
+      "column1": "float64",
+      "column2": "object",
+      "column3": "int64"
+    }
+  }
 
 Data
 ~~~~
