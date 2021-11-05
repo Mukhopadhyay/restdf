@@ -9,7 +9,7 @@ except ModuleNotFoundError:
 import pytest
 
 # RestDF modules
-from restdf.utils import utils
+from restdf.utils import utils, exceptions
 
 @pytest.mark.parametrize('parameters,path,host,port,debug,email', [
     (['/tests/test_data/test.csv', '-H', '127.0.0.1', '-p', '1333', '-d', '-t', 'test', '-e', 'abc@email.com'],
@@ -54,11 +54,13 @@ def test_get_parser(parameters, path, host, port, debug, email) -> None:
     assert isinstance(namespace.email, type(email))
 
 
-@pytest.mark.parametrize('params', [
-    ['-d'],
-    [123, '-e', 'abc@email.com']
+@pytest.mark.parametrize('params,exception', [
+    (['-d'], SystemExit),
+    (['-e', 'abc@email.com'], SystemExit)
 ])
 @pytest.mark.utils
-def test_get_parser_exceptions(params) -> None:
-    with pytest.raises(SystemExit):
-        arg = utils.get_parser().parse_args()
+def test_get_parser_exceptions(params, exception) -> None:
+    with pytest.raises(exception):
+        arg = utils.get_parser()
+        arg.parse_args(params)
+
