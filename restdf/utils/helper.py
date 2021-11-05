@@ -206,7 +206,7 @@ def get_dataframe_sample(df: pd.DataFrame, request_body: Dict[str, Any]) -> List
 
     Following attributes are looked for in the request_body dictionary:
         * n:                Number of random rows to return (default: 1)
-        * frac:             Faction of axis items to return. Cannot be used alongside 'n'
+        * frac:             Fraction of axis items to return. Cannot be used alongside 'n'
         * replace:          Allow or disallow sampling of the same row more than once.
                             If n > (size of DataFrame) then replace must be True, else error will be thrown
         * weights:          [list containing prob dist], Defaults to None, meaning equal probability weighting.
