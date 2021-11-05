@@ -216,7 +216,7 @@ Datatypes endpoint (``/dtypes``)
 Returns the datatypes of the columns. This endpoint returns the response from ``df.dtypes``
 and returns the result.
 
-**Type:** ``POST``
+**Type:** ``GET``
 
 ``/dtypes`` Example Response
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -230,6 +230,89 @@ and returns the result.
       "column3": "int64"
     }
   }
+
+DataFrame info endpoint (``/info``)
+***********************************
+
+Returns some dataframe info (Datatypes, Non-null counts etc). This endpoint returns the
+response from ``df.info()`` and returns the result.
+
+**Type:** ``GET``
+
+``/info`` Example Response
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: javascript
+
+  {
+    "info": [
+      {
+        "column": "column1",
+        "count": 30,
+        "dtype": "int64",
+        "index": 0
+      },
+      {
+        "column": "column2",
+        "count": 30,
+        "dtype": "int64",
+        "index": 1
+      },
+      {
+        "column": "column3",
+        "count": 30,
+        "dtype": "object",
+        "index": 2
+      }
+    ]
+  }
+
+DataFrame nulls endpoint (``/nulls``)
+*************************************
+
+Returns the counts of nulls in the dataframe. This endpoint returns the response
+from ``pd.isna(df)`` aggregated by **sum**
+
+**Type:** ``GET``
+
+``/null`` Example Response
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: javascript
+
+    {
+      "nulls": {
+        "column1": 7,
+        "column2": 22,
+        "column3": 0
+      }
+    }
+
+Value Counts endpoint (``/value_counts/{column_name}``)
+*******************************************************
+
+Returns the value_count result of a column using the method
+``pd.Series.value_counts()`` since, this method works on a ``pandas.Series``
+we require the **column_name** on which we're performing the value_counts operation.
+
+According to pandas `docs <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.value_counts.html>`__ on value_counts
+
+*"The resulting object will be in descending order so that the first element is
+the most frequently-occurring element. Excludes NA values by default."*
+
+``/value_counts`` Example Response
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: javascript
+
+  {
+    "column": "Sex",
+    "value_counts": {
+      "female": 16,
+      "male": 14
+    }
+  }
+
 
 Data
 ~~~~
