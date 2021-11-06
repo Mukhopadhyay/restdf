@@ -8,7 +8,9 @@ RestDF
 
 |made-with-python| |Flask|
 
-|GH Actions| |GitHub license| |PRs Welcome| |RTD Badge|
+|GH Actions| |RTD Badge| |PyPi Version|
+
+|GitHub license| |PRs Welcome|
 
 **RestDF** is a command line utility for running any
 ``pandas.DataFrame`` compatible datasets as a Rest API, with built-in
@@ -25,8 +27,17 @@ RestDF
    pages/endpoints
    pages/tests
 
-Running ``RestDF``
-~~~~~~~~~~~~~~~~~~
+Installing ``RestDF``
+~~~~~~~~~~~~~~~~~~~~~
+**RestDF** can be installed from PyPi using
+
+.. code:: bash
+
+   pip install restdf
+
+
+Getting Started with ``RestDF``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``RestDF`` can be run like any other python module using the ``-m``
 flag, additional flags can be used to configure the server. Following
@@ -36,7 +47,14 @@ dataset on `localhost:5000/docs <http://localhost:5000/docs>`__
 
 .. code:: bash
 
-    python -m restdf https://raw.githubusercontent.com/cs109/2014_data/master/diamonds.csv
+   restdf https://raw.githubusercontent.com/cs109/2014_data/master/diamonds.csv
+
+
+or,
+
+.. code:: bash
+
+   python -m restdf https://raw.githubusercontent.com/cs109/2014_data/master/diamonds.csv
 
 
 
@@ -54,3 +72,6 @@ dataset on `localhost:5000/docs <http://localhost:5000/docs>`__
 .. |GH Actions| image:: https://github.com/Mukhopadhyay/restdf/actions/workflows/tests.yml/badge.svg
    :target: https://github.com/Mukhopadhyay/restdf/actions
    :alt: Github-actions test status badge.
+.. |PyPi Version| image:: https://badge.fury.io/py/restdf.png
+   :target: https://pypi.org/project/restdf/
+   :alt: PyPi Version

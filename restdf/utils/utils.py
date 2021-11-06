@@ -20,7 +20,7 @@ def get_parser() -> argparse.ArgumentParser:
 
     parser = argparse.ArgumentParser(
         prog='RestDF',
-        description='Simple API interface from a dataframe!'
+        description='Create a simple API from a dataframe!'
     )
 
     # Positional arguments

@@ -15,7 +15,9 @@ ipynb_checkpoints/
 *.out
 *.Log
 
-# Distribution
+# Distribution / packaging
+dist/
+sdist/
 *.egg-info
 *.egg
 
