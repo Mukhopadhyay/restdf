@@ -8,7 +8,7 @@ RestDF
 
 |made-with-python| |Flask|
 
-|GitHub license| |PRs Welcome| |RTD Badge|
+|GH Actions| |GitHub license| |PRs Welcome| |RTD Badge|
 
 **RestDF** is a command line utility for running any
 ``pandas.DataFrame`` compatible datasets as a Rest API, with built-in
@@ -51,9 +51,6 @@ dataset on `localhost:5000/docs <http://localhost:5000/docs>`__
 .. |RTD Badge| image:: https://readthedocs.org/projects/restdf/badge/?version=latest
    :target: https://restdf.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
-
-
-.. Search
-.. ==================
-
-.. * :ref:`search`
+.. |GH Actions| image:: https://github.com/Mukhopadhyay/restdf/actions/workflows/tests.yml/badge.svg
+   :target: https://github.com/Mukhopadhyay/restdf/actions
+   :alt: Github-actions test status badge.
