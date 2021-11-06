@@ -44,3 +44,15 @@ Code style checking is handled via ``flake8``
     flake8 restdf
 
 The config for **flake8** are kept at ``setup.cfg``.
+
+tox
+~~~
+For testing ``RestDF`` on different python versions we're using ``tox``. The
+configuration for it is available in ``tox.ini``
+
+.. code:: bash
+
+    tox
+
+Apart from the unittests, tox tests for code style and static typing using
+flake8 & mypy respectively.
