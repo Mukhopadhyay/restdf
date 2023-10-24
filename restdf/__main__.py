@@ -1,7 +1,4 @@
-# Built-in modules
-import os
 import uvicorn
-
 from .app import app
 
 

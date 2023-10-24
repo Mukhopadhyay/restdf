@@ -1,8 +1,8 @@
 import uvicorn
+from api import router
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 
-from api import router
 
 app = FastAPI()
 
@@ -15,7 +15,6 @@ def custom_openapi():
     openapi_schema = get_openapi(
         title="filename.csv",
         version="1.0.0",
-        # summary="Created using <a href='https://github.com/Mukhopadhyay/restdf'>RestDF</a>",
         description="""
 Created using **[RestDF](https://github.com/Mukhopadhyay/restdf)**
 
