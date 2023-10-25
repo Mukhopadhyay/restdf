@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, Union
 from fastapi import __version__ as fa_version
 
 
@@ -16,10 +16,10 @@ class IndexResponse(BaseModel):
 
 
 class Response(BaseModel):
-    data: Dict[str, Any]
-    fname: str
+    data: Union[Dict[str, Any], List]
     status: Optional[int] = 200
 
 
-class ErrorResponse(BaseModel):
-    pass
+class ColumnResponse(BaseModel):
+    data: List[str]
+    status: Optional[int] = 200
