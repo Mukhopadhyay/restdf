@@ -3,7 +3,8 @@ from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 
 from api import router as index_router
-from api.data import get_router as get_data_router
+
+from api.data import DataController
 from api.metadata import get_router as get_metadata_router
 
 import pandas as pd
@@ -13,8 +14,13 @@ df = pd.read_csv("./../tests/test_data/test.csv")
 app = FastAPI()
 
 app.include_router(index_router, include_in_schema=False)
-app.include_router(get_data_router(df))
-app.include_router(get_metadata_router(df))
+
+data_controller = DataController(df)
+data_controller.generate()
+app.include_router(data_controller.get_router())
+
+# app.include_router(get_data_router(df))
+# app.include_router(get_metadata_router(df))
 
 
 def custom_openapi():

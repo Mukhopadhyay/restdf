@@ -1,14 +1,32 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import List, Optional, Any
 
 
-class _CommonRequestAttrs(BaseModel):
-    columns: Optional[List[str]] = None
-    index: Optional[bool] = False
+class DataRequest(BaseModel):
+    columns: List[str] = []
 
 
-class DescribeRequest(BaseModel):
-    datetime_is_numeric: Optional[bool] = False
-    exclude: Optional[List[str]] = ["O"]
-    include: Optional[List[str]] = ["int"]
-    percentiles: Optional[List[float]] = [0.01, 0.25, 0.75, 0.99]
+class ConditionalData(DataRequest):
+    value: Any
+    as_string: Optional[bool] = False
+
+
+class HeadPayload(DataRequest):
+    num: Optional[int] = 5
+
+
+class SamplePayload(DataRequest):
+    num: Optional[int] = 5
+
+
+class MultiConditionalData(DataRequest):
+    values: List[Any]
+    as_string: Optional[bool] = False
+
+
+class FindStringData(DataRequest):
+    pattern: str
+    case: Optional[bool] = False
+    flags: Optional[Any] = 0
+    na: Optional[bool] = True
+    regex: Optional[bool] = False
