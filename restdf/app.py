@@ -1,6 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
+from fastapi.middleware.cors import CORSMiddleware
 
 from api import router as index_router
 
@@ -15,14 +16,14 @@ app = FastAPI()
 
 app.include_router(index_router, include_in_schema=False)
 
+# Adding the routers
+
 data_controller = DataController(df)
 data_controller.generate()
 app.include_router(data_controller.get_router())
 
-# app.include_router(get_data_router(df))
-# app.include_router(get_metadata_router(df))
 
-
+# Cusomizing OpenAPI
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
@@ -46,9 +47,26 @@ Created using **[RestDF](https://github.com/Mukhopadhyay/restdf)**
 app.openapi = custom_openapi
 
 
+# CORS (Cross-Origin-Resource-Sharing)
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 # Main method
 def main() -> None:
-    uvicorn.run(app, host="127.0.0.1", port=5000, log_level="info")
+    uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")
 
 
 if __name__ == "__main__":
