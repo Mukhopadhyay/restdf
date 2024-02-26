@@ -47,7 +47,7 @@ class DataController:
         self.__router = APIRouter(prefix=self.prefix, tags=self.tags)
 
         @self.__router.post("/head", response_model=response.DataResponse)
-        async def head(data: request.HeadPayload):
+        async def head(data: request.DataRequest):
             """
             **Returns the head of the dataframe.**
 
@@ -62,6 +62,19 @@ class DataController:
             **Returns random rows from the dataframe.**
 
             This endpoint returns the response from <code>df.sample(**kwargs)</code> & returns the result.
+
+            **num**: int: _OPTIONAL_ - Number of items from axis to return. Cannot be used with frac. Default = 1 if frac = None
+
+            **frac**: float: _OPTIONA                                                                                               L_ - Fraction of axis items to return. Cannot be used with n.
+
+            **weights**: str or list: _OPTIONAL_ - Default 'None' results in equal probability weighting.
+
+            **random_state**: int: _OPTIONAL_ - Given int will be used as a seed for random number generator.
+
+            **axis**: int: _OPTIONAL) - 0 or 'index', 1 or 'columns', Defaults to None
+
+            **ignore_index**: bool: _OPTIONAL_ - If True, the resulting index will be labeled 0, 1, ..., n-1
+
             """
             service = DataService(self.__df)
             return service.sample(data)

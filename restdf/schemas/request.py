@@ -1,8 +1,9 @@
 from pydantic import BaseModel
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Union
 
 
 class DataRequest(BaseModel):
+    num: Optional[int] = 5
     columns: List[str] = []
 
 
@@ -11,12 +12,13 @@ class ConditionalData(DataRequest):
     as_string: Optional[bool] = False
 
 
-class HeadPayload(DataRequest):
-    num: Optional[int] = 5
-
-
 class SamplePayload(DataRequest):
-    num: Optional[int] = 5
+    frac: Optional[float] = None
+    replace: Optional[bool] = False
+    weights: Optional[Union[str, list]] = None
+    random_state: Optional[int] = None
+    axis: Optional[int] = None
+    ignore_index: Optional[bool] = False
 
 
 class MultiConditionalData(DataRequest):

@@ -6,4 +6,4 @@ router = APIRouter()
 
 @router.get("/")
 async def index():
-    return {}
+    return {"name": "RestDF", "version": "2.0.0"}

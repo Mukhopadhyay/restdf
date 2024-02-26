@@ -49,8 +49,6 @@ app.openapi = custom_openapi
 
 # CORS (Cross-Origin-Resource-Sharing)
 origins = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
     "http://localhost",
     "http://localhost:8080",
 ]
